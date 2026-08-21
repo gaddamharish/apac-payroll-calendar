@@ -22,6 +22,8 @@
   .chip .dot { width: 8px; height: 8px; border-radius: 50%; }
   .chip.active { }
   .toggle-row { display: inline-flex; gap: 4px; background: #fff; border: 1px solid #E5E3D8; border-radius: 8px; padding: 4px; margin-bottom: 24px; }
+  .india-row { display: flex; align-items: center; gap: 8px; background: #C1440E0D; border: 1px solid #C1440E33; border-radius: 8px; padding: 8px 12px; font-size: 13px; }
+  .india-row select { border: 1px solid #D9D7CE; border-radius: 6px; padding: 4px 8px; font-size: 13px; font-family: inherit; background: #fff; }
   .toggle-btn { padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: 500; border: none; background: transparent; color: #5A5A6E; cursor: pointer; }
   .toggle-btn.active { background: #1B2430; color: #fff; }
   h2.title { font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 600; margin: 0 0 2px; }
@@ -60,6 +62,7 @@
 
 <div class="wrap">
   <div class="chips" id="chips"></div>
+  <div id="indiaStateRow" style="display:none;margin-bottom:16px;"></div>
   <div class="toggle-row">
     <button class="toggle-btn active" id="btnMonth" onclick="setView('month')">This month</button>
     <button class="toggle-btn" id="btnCountry" onclick="setView('country')">By country</button>
@@ -184,8 +187,37 @@ const WEEKDAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 // Major known 2026 public holidays per country (government/bank closure days).
 // Moon-sighting/lunar-dependent dates not yet confirmed at source time are omitted rather than guessed.
+// India holidays are state-dependent for banking/PF/ESI/PT purposes — national list applies everywhere,
+// state list is added on top based on the selected state below. Partial list: covers the fixed and
+// widely-sourced dates only (Sankranti/Pongal, regional new year, statehood/founder days, May Day,
+// Ganesh Chaturthi, Raksha Bandhan, Janmashtami). Lunar-cycle festivals without a confirmed 2026 gazette
+// date yet (Holi, Diwali, Dussehra, Eid) are NOT included — check your state's official gazette for those.
+const INDIA_NATIONAL_HOLIDAYS = ["2026-01-26", "2026-08-15", "2026-10-02"];
+const INDIA_STATE_HOLIDAYS = {
+  none: [],
+  maharashtra: ["2026-01-14", "2026-02-19", "2026-05-01", "2026-09-02"],
+  karnataka: ["2026-01-14", "2026-05-01", "2026-09-02"],
+  telangana: ["2026-01-14", "2026-05-01", "2026-09-02"],
+  andhra_pradesh: ["2026-01-14", "2026-05-01", "2026-09-02"],
+  west_bengal: ["2026-01-23", "2026-04-15", "2026-05-01"],
+  tamil_nadu: ["2026-01-14", "2026-01-15", "2026-04-14", "2026-05-01", "2026-09-02"],
+  gujarat: ["2026-01-14", "2026-05-01", "2026-08-03", "2026-08-12"],
+  madhya_pradesh: ["2026-08-03", "2026-08-12"],
+};
+const INDIA_STATE_LABELS = {
+  none: "National holidays only",
+  maharashtra: "Maharashtra",
+  karnataka: "Karnataka",
+  telangana: "Telangana",
+  andhra_pradesh: "Andhra Pradesh",
+  west_bengal: "West Bengal",
+  tamil_nadu: "Tamil Nadu",
+  gujarat: "Gujarat",
+  madhya_pradesh: "Madhya Pradesh",
+};
+let indiaState = "telangana";
+
 const HOLIDAYS = {
-  in: ["2026-01-26","2026-08-15","2026-10-02"],
   sg: ["2026-01-01","2026-02-17","2026-02-18","2026-03-21","2026-04-03","2026-05-01","2026-05-27","2026-06-01","2026-08-10","2026-11-09","2026-12-25"],
   au: ["2026-01-01","2026-01-26","2026-04-03","2026-04-06","2026-04-25","2026-12-25","2026-12-28"],
   jp: ["2026-01-01","2026-01-12","2026-02-11","2026-02-23","2026-03-20","2026-04-29","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-07-20","2026-08-11","2026-09-21","2026-09-22","2026-09-23","2026-10-12","2026-11-03","2026-11-23"],
@@ -203,8 +235,11 @@ function pad(n) { return n < 10 ? "0" + n : "" + n; }
 function isoDate(y, m, d) { return `${y}-${pad(m)}-${pad(d)}`; }
 function isWeekend(date) { const day = date.getUTCDay(); return day === 0 || day === 6; }
 function isHoliday(countryId, date) {
-  const list = HOLIDAYS[countryId] || [];
   const ds = date.toISOString().slice(0, 10);
+  if (countryId === "in") {
+    return INDIA_NATIONAL_HOLIDAYS.includes(ds) || (INDIA_STATE_HOLIDAYS[indiaState] || []).includes(ds);
+  }
+  const list = HOLIDAYS[countryId] || [];
   return list.includes(ds);
 }
 function getAdjustedDate(countryId, year, month, day) {
@@ -246,6 +281,21 @@ function setView(v) {
 
 function escapeHtml(str) { const d = document.createElement("div"); d.textContent = str; return d.innerHTML; }
 
+function setIndiaState(v) { indiaState = v; render(); }
+
+function renderIndiaStateRow() {
+  const row = document.getElementById("indiaStateRow");
+  if (!active.in) { row.style.display = "none"; row.innerHTML = ""; return; }
+  row.style.display = "block";
+  const options = Object.keys(INDIA_STATE_LABELS).map(k =>
+    `<option value="${k}" ${k === indiaState ? "selected" : ""}>${INDIA_STATE_LABELS[k]}</option>`
+  ).join("");
+  row.innerHTML = `<div class="india-row">
+    <span>\u{1F1EE}\u{1F1F3} India state for holiday adjustment:</span>
+    <select onchange="setIndiaState(this.value)">${options}</select>
+  </div>`;
+}
+
 function renderChips() {
   const chips = document.getElementById("chips");
   chips.innerHTML = "";
@@ -259,6 +309,7 @@ function renderChips() {
     el.onclick = () => toggleCountry(c.id);
     chips.appendChild(el);
   });
+  renderIndiaStateRow();
 }
 
 function render() {
