@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>APAC Payroll Compliance Calendar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #F7F6F2; color: #1B2430; font-family: 'Inter', sans-serif; }
+  .serif { font-family: 'Source Serif 4', serif; }
+  .mono { font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+  .header { background: #1B2430; color: #F7F6F2; padding: 28px 16px; }
+  .header-inner { max-width: 760px; margin: 0 auto; }
+  .eyebrow { font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: #B08D57; margin: 0; }
+  h1 { font-family: 'Source Serif 4', serif; font-size: 30px; font-weight: 700; margin: 4px 0 0; }
+  .sub { font-size: 14px; color: #C7C9CE; margin-top: 6px; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 56px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; font-size: 12px; font-weight: 500; border: 1px solid #D9D7CE; background: transparent; color: #9A988E; cursor: pointer; }
+  .chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .chip.active { }
+  .toggle-row { display: inline-flex; gap: 4px; background: #fff; border: 1px solid #E5E3D8; border-radius: 8px; padding: 4px; margin-bottom: 24px; }
+  .toggle-btn { padding: 6px 14px; border-radius: 6px; font-size: 14px; font-weight: 500; border: none; background: transparent; color: #5A5A6E; cursor: pointer; }
+  .toggle-btn.active { background: #1B2430; color: #fff; }
+  h2.title { font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 600; margin: 0 0 2px; }
+  .hint { font-size: 12px; color: #9A988E; margin: 0 0 16px; }
+  .empty { font-size: 14px; color: #9A988E; font-style: italic; }
+  ul.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  li.item { display: flex; align-items: flex-start; gap: 12px; background: #fff; border: 1px solid #E5E3D8; border-radius: 10px; padding: 12px 16px; }
+  .check { margin-top: 2px; width: 20px; height: 20px; border-radius: 5px; border: 1px solid #D9D7CE; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; background: transparent; color: #fff; font-size: 12px; }
+  .check.done { background: #2D5F4C; border-color: #2D5F4C; }
+  .day { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; width: 34px; flex-shrink: 0; }
+  .item-body.done { text-decoration: line-through; color: #B0AFA5; }
+  .country-tag { font-size: 11px; font-weight: 500; margin-right: 8px; padding: 2px 6px; border-radius: 4px; }
+  .note { font-size: 12px; color: #9A988E; margin-top: 2px; }
+  .country-card { background: #fff; border: 1px solid #E5E3D8; border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+  .country-head { padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
+  .country-head .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .country-head h3 { font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 600; margin: 0; }
+  .country-body { padding: 12px 16px; }
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #9A988E; font-weight: 500; margin: 0 0 6px; }
+  .ref-item { font-size: 14px; display: flex; gap: 8px; margin-bottom: 6px; }
+  .ref-day { font-family: 'IBM Plex Mono', monospace; font-weight: 600; width: 34px; flex-shrink: 0; }
+  .ref-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; width: 88px; flex-shrink: 0; color: #5A5A6E; }
+  .footer-note { font-size: 12px; color: #9A988E; margin-top: 32px; line-height: 1.6; border-top: 1px solid #E5E3D8; padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-inner">
+    <p class="eyebrow">APAC Payroll</p>
+    <h1>Compliance Calendar</h1>
+    <p class="sub">Every recurring statutory payroll deadline across 9 markets, in one reference.</p>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="chips" id="chips"></div>
+  <div class="toggle-row">
+    <button class="toggle-btn active" id="btnMonth" onclick="setView('month')">This month</button>
+    <button class="toggle-btn" id="btnCountry" onclick="setView('country')">By country</button>
+  </div>
+  <div id="content"></div>
+  <p class="footer-note">
+    Reference dates only, compiled from public guidance as of August 2026 — several markets have rules in transition
+    (e.g. Australia's Payday Super phase-in, India's Income Tax Act 2025 form changes, Hong Kong's proposed MPF cap increase).
+    Confirm exact figures against the local authority or your in-country counsel before relying on them operationally.
+  </p>
+</div>
+
+<script>
+const COUNTRIES = [
+  { id: "in", name: "India", color: "#C1440E",
+    monthly: [
+      { day: 7, label: "TDS deposit on salary (Challan 281)", note: "30 Apr instead, for March salary TDS" },
+      { day: 15, label: "EPF contribution + ECR filing", note: "" },
+      { day: 15, label: "ESI contribution", note: "" },
+    ],
+    annual: [
+      { when: "31 May/Jul/Oct/Jan", label: "Form 24Q quarterly TDS return (Form 138 under Income Tax Act 2025)" },
+      { when: "15 Jun/Sep/Dec/Mar", label: "Advance tax instalments" },
+      { when: "15 Jun", label: "Form 16 issued to employees" },
+      { when: "28/29 Feb", label: "Professional Tax annual return (state-specific; verify local due date)" },
+    ]
+  },
+  { id: "sg", name: "Singapore", color: "#8B2FC9",
+    monthly: [ { day: 14, label: "CPF contribution + Skills Development Levy (SDL)", note: "" } ],
+    annual: [
+      { when: "1 Mar", label: "IR8A employee income submission to IRAS (AIS employers file electronically)" },
+      { when: "Event-based", label: "IR21 tax clearance — file \u22651 month before a foreign employee's departure/cessation" },
+    ]
+  },
+  { id: "au", name: "Australia", color: "#1E5AA8",
+    monthly: [
+      { day: null, label: "Superannuation Guarantee — paid within 7 business days of each payday", note: "Payday Super, effective from 1 Jul 2026; replaces the old quarterly cycle" },
+      { day: null, label: "STP (Single Touch Payroll) report — each pay event", note: "" },
+    ],
+    annual: [ { when: "14 Jul", label: "STP finalisation declaration for the FY just ended" } ]
+  },
+  { id: "jp", name: "Japan", color: "#B0313F",
+    monthly: [ { day: 10, label: "Income tax withholding (gensen choshu) + residence tax remittance", note: "" } ],
+    annual: [
+      { when: "1 Jun\u201310 Jul", label: "Annual labour insurance report & premium settlement" },
+      { when: "December", label: "Year-end tax adjustment (nenmatsu chosei) run with final payroll" },
+      { when: "31 Jan", label: "Withholding certificates (gensen choshu hyo) + municipal salary reports issued" },
+    ]
+  },
+  { id: "hk", name: "Hong Kong", color: "#2D8659",
+    monthly: [ { day: 10, label: "MPF contribution remittance", note: "" } ],
+    annual: [
+      { when: "~Apr\u2013May", label: "Employer's Return (BIR56A + IR56B) \u2014 due within 1 month of IRD issuance" },
+      { when: "Event-based", label: "IR56E (new hire) within 3 months; IR56F/IR56G (leavers) \u22651 month before cessation/departure" },
+    ]
+  },
+  { id: "ph", name: "Philippines", color: "#F4A300",
+    monthly: [
+      { day: 10, label: "BIR withholding tax (Form 1601-C)", note: "" },
+      { day: 15, label: "SSS contribution", note: "exact date staggered by employer number; verify SSS schedule" },
+      { day: 15, label: "PhilHealth contribution", note: "verify exact digit-based schedule via EPRS" },
+      { day: 12, label: "Pag-IBIG contribution", note: "typically 10th\u201315th" },
+    ],
+    annual: [
+      { when: "31 Jan", label: "Annual return / BIR Form 2316 to employees" },
+      { when: "24 Dec", label: "13th month pay deadline" },
+    ]
+  },
+  { id: "my", name: "Malaysia", color: "#0F7A4E",
+    monthly: [ { day: 15, label: "EPF, SOCSO, EIS, PCB (MTD) and HRD Levy", note: "all four/five due the same date" } ],
+    annual: [
+      { when: "30 Apr", label: "Form E annual employer declaration" },
+      { when: "28/29 Feb", label: "Form EA / EC issued to employees" },
+    ]
+  },
+  { id: "id", name: "Indonesia", color: "#CE1126",
+    monthly: [
+      { day: 10, label: "BPJS Kesehatan (health insurance) payment", note: "" },
+      { day: 15, label: "BPJS Ketenagakerjaan (employment social security) payment", note: "" },
+      { day: 10, label: "PPh 21 income tax payment", note: "" },
+      { day: 20, label: "PPh 21 monthly reporting", note: "" },
+    ],
+    annual: [
+      { when: "Event-based", label: "THR (religious holiday allowance) \u2014 pay \u22657 days before each employee's relevant holiday" },
+      { when: "December", label: "PPh 21 annual reconciliation (TER method trues up to progressive rates)" },
+    ]
+  },
+  { id: "th", name: "Thailand", color: "#00247D",
+    monthly: [
+      { day: 7, label: "PND.1 withholding tax (paper filing)", note: "15th if e-filed" },
+      { day: 15, label: "Social Security Fund (SSF) contribution", note: "" },
+    ],
+    annual: [
+      { when: "15 Feb", label: "Withholding tax certificates issued to employees" },
+      { when: "28 Feb", label: "PND.1 Kor annual summary" },
+    ]
+  },
+];
+
+const STORAGE_KEY = "apac-payroll-done-v1";
+const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const today = new Date();
+const monthKey = today.getFullYear() + "-" + (today.getMonth() + 1);
+
+let active = {}; COUNTRIES.forEach(c => active[c.id] = true);
+let view = "month";
+let done = {};
+
+function load() {
+  try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) done = JSON.parse(raw); } catch(e) { console.error(e); }
+}
+function save() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(done)); } catch(e) { console.error(e); }
+}
+
+function toggleCountry(id) { active[id] = !active[id]; render(); }
+function toggleDone(key) { done[key] = !done[key]; save(); render(); }
+function setView(v) {
+  view = v;
+  document.getElementById("btnMonth").classList.toggle("active", v === "month");
+  document.getElementById("btnCountry").classList.toggle("active", v === "country");
+  render();
+}
+
+function escapeHtml(str) { const d = document.createElement("div"); d.textContent = str; return d.innerHTML; }
+
+function renderChips() {
+  const chips = document.getElementById("chips");
+  chips.innerHTML = "";
+  COUNTRIES.forEach(c => {
+    const el = document.createElement("button");
+    el.className = "chip" + (active[c.id] ? " active" : "");
+    el.style.borderColor = active[c.id] ? c.color : "#D9D7CE";
+    el.style.backgroundColor = active[c.id] ? c.color + "1A" : "transparent";
+    el.style.color = active[c.id] ? c.color : "#9A988E";
+    el.innerHTML = `<span class="dot" style="background:${c.color}"></span>${c.name}`;
+    el.onclick = () => toggleCountry(c.id);
+    chips.appendChild(el);
+  });
+}
+
+function render() {
+  renderChips();
+  const content = document.getElementById("content");
+  const selected = COUNTRIES.filter(c => active[c.id]);
+
+  if (view === "month") {
+    let items = [];
+    selected.forEach(c => {
+      c.monthly.forEach((m, idx) => {
+        items.push({ country: c, day: m.day, label: m.label, note: m.note, key: c.id + "-m" + idx + "-" + monthKey });
+      });
+    });
+    items.sort((a, b) => (a.day ?? 99) - (b.day ?? 99));
+
+    let html = `<h2 class="title">${MONTH_NAMES[today.getMonth()]} ${today.getFullYear()}</h2>
+      <p class="hint">Recurring monthly deadlines, across selected markets, in date order.</p>`;
+    if (items.length === 0) {
+      html += `<p class="empty">Select at least one country above.</p>`;
+    } else {
+      html += `<ul class="items">` + items.map(item => `
+        <li class="item">
+          <button class="check${done[item.key] ? " done" : ""}" onclick="toggleDone('${item.key}')" aria-label="Mark done">${done[item.key] ? "\u2713" : ""}</button>
+          <div class="day" style="color:${item.country.color}">${item.day ?? "\u2014"}</div>
+          <div class="item-body${done[item.key] ? " done" : ""}">
+            <div>
+              <span class="country-tag" style="background:${item.country.color}1A;color:${item.country.color}">${item.country.name}</span>
+              ${escapeHtml(item.label)}
+            </div>
+            ${item.note ? `<div class="note">${escapeHtml(item.note)}</div>` : ""}
+          </div>
+        </li>
+      `).join("") + `</ul>`;
+    }
+    content.innerHTML = html;
+  } else {
+    let html = "";
+    if (selected.length === 0) {
+      html = `<p class="empty">Select at least one country above.</p>`;
+    } else {
+      html = selected.map(c => `
+        <div class="country-card">
+          <div class="country-head" style="background:${c.color}12">
+            <span class="dot" style="background:${c.color}"></span>
+            <h3 style="color:${c.color}">${c.name}</h3>
+          </div>
+          <div class="country-body">
+            <p class="section-label">Monthly</p>
+            ${c.monthly.map(m => `
+              <div class="ref-item">
+                <span class="ref-day">${m.day ?? "\u2014"}</span>
+                <span>${escapeHtml(m.label)}${m.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(m.note)}</span>` : ""}</span>
+              </div>`).join("")}
+            <p class="section-label" style="margin-top:10px">Annual / event-based</p>
+            ${c.annual.map(a => `
+              <div class="ref-item">
+                <span class="ref-when">${a.when}</span>
+                <span>${escapeHtml(a.label)}</span>
+              </div>`).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+    content.innerHTML = html;
+  }
+}
+
+load();
+render();
+</script>
+</body>
+</html>
