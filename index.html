@@ -53,6 +53,8 @@
   .calc-detail summary { font-size: 12px; color: #B08D57; cursor: pointer; font-weight: 500; }
   .calc-detail summary:hover { color: #96733F; }
   .calc-detail p { font-size: 12.5px; color: #5A5A6E; line-height: 1.5; margin: 6px 0 0; font-weight: 400; }
+  .source-link { display: inline-block; font-size: 11px; color: #9A988E; margin-top: 6px; text-decoration: underline; }
+  .source-link:hover { color: #5A5A6E; }
   .ref-day { font-family: 'IBM Plex Mono', monospace; font-weight: 600; width: 34px; flex-shrink: 0; }
   .ref-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; width: 88px; flex-shrink: 0; color: #5A5A6E; }
   .footer-note { font-size: 12px; color: #9A988E; margin-top: 32px; line-height: 1.6; border-top: 1px solid #E5E3D8; padding-top: 16px; }
@@ -91,151 +93,203 @@ const COUNTRIES = [
   { id: "in", name: "India", color: "#C1440E",
     monthly: [
       { day: 7, label: "TDS deposit on salary (Challan 281)", note: "30 Apr instead, for March salary TDS",
-        detail: "Calculated on each employee's projected annual taxable salary (old or new regime, per their declaration), applying the applicable slab rates under Section 192, then divided across remaining pay periods. Exists so income tax is collected as it's earned rather than in one annual lump sum. Employer deposits the total withheld via Challan 281 on the Income Tax e-filing portal (net banking/NEFT), using the company's TAN." },
+        detail: "Calculated on each employee's projected annual taxable salary (old or new regime, per their declaration), applying the applicable slab rates under Section 192, then divided across remaining pay periods. Exists so income tax is collected as it's earned rather than in one annual lump sum. Employer deposits the total withheld via Challan 281 on the Income Tax e-filing portal (net banking/NEFT), using the company's TAN.",
+        source: "https://futurexsolutions.com/compliance-calendar-india-2026-employer-deadlines/", sourceLabel: "futurexsolutions.com" },
       { day: 15, label: "EPF contribution + ECR filing", note: "",
-        detail: "12% of Basic + DA from the employee, matched by 12% from the employer (of which 8.33% routes to the EPS pension scheme, capped at the statutory wage ceiling, and the rest to EPF). Purpose: mandatory retirement savings under the EPF Act 1952. Paid by generating an Electronic Challan-cum-Return (ECR) on the EPFO Unified Portal and remitting via net banking." },
+        detail: "12% of Basic + DA from the employee, matched by 12% from the employer (of which 8.33% routes to the EPS pension scheme, capped at the statutory wage ceiling, and the rest to EPF). Purpose: mandatory retirement savings under the EPF Act 1952. Paid by generating an Electronic Challan-cum-Return (ECR) on the EPFO Unified Portal and remitting via net banking.",
+        source: "https://ezhrm.in/hr-compliance-calendar-india-fy-2026-27/", sourceLabel: "ezhrm.in" },
       { day: 15, label: "ESI contribution", note: "",
-        detail: "0.75% of gross wages from the employee, 3.25% from the employer, applicable only where gross wages are within the ESI wage ceiling (currently \u2264\u20b921,000/month). Funds medical and cash benefits under the ESI Act 1948. Paid through the ESIC portal by generating a monthly challan." },
+        detail: "0.75% of gross wages from the employee, 3.25% from the employer, applicable only where gross wages are within the ESI wage ceiling (currently \u2264\u20b921,000/month). Funds medical and cash benefits under the ESI Act 1948. Paid through the ESIC portal by generating a monthly challan.",
+        source: "https://ezhrm.in/hr-compliance-calendar-india-fy-2026-27/", sourceLabel: "ezhrm.in" },
       { day: 10, label: "Professional Tax \u2014 Telangana, Andhra Pradesh & Madhya Pradesh", note: "",
-        detail: "A flat monthly slab amount (not a percentage) based on gross salary band \u2014 see the state table below for exact slabs. Levied under each state's own Professions Tax Act to fund state revenue; unrelated to income tax. Deducted from salary and paid via the respective state Commercial Taxes Department portal using the employer's PTRC registration." },
+        detail: "A flat monthly slab amount (not a percentage) based on gross salary band \u2014 see the state table below for exact slabs. Levied under each state's own Professions Tax Act to fund state revenue; unrelated to income tax. Deducted from salary and paid via the respective state Commercial Taxes Department portal using the employer's PTRC registration.",
+        source: "https://hrengage.ai/compliance/professional-tax/telangana", sourceLabel: "hrengage.ai" },
       { day: 15, label: "Professional Tax \u2014 Maharashtra & Gujarat", note: "Maharashtra moved from end-of-month to 15th, effective Mar 2026",
-        detail: "Flat monthly slab by gross salary band (see state table below). Same purpose and payment route as other states \u2014 deducted from salary, remitted via the state's PT portal under the employer's PTRC." },
+        detail: "Flat monthly slab by gross salary band (see state table below). Same purpose and payment route as other states \u2014 deducted from salary, remitted via the state's PT portal under the employer's PTRC.",
+        source: "https://ezhrm.in/professional-tax-india-2026-state-wise-slabs-filing-guide/", sourceLabel: "ezhrm.in" },
       { day: 20, label: "Professional Tax \u2014 Karnataka", note: "",
-        detail: "Flat monthly slab by gross salary band (see state table below). Paid via the Karnataka Commercial Taxes Department e-PRERANA portal." },
+        detail: "Flat monthly slab by gross salary band (see state table below). Paid via the Karnataka Commercial Taxes Department e-PRERANA portal.",
+        source: "https://futurexsolutions.com/professional-tax-india/", sourceLabel: "futurexsolutions.com" },
     ],
     annual: [
       { when: "31 May/Jul/Oct/Jan", label: "Form 24Q quarterly TDS return (Form 138 under Income Tax Act 2025)",
-        detail: "Not a payment \u2014 a return reconciling all TDS deducted and deposited for the quarter against each employee's PAN. Filed online via TRACES/the income tax e-filing portal. Required so the government can match withheld tax to individual taxpayer records." },
+        detail: "Not a payment \u2014 a return reconciling all TDS deducted and deposited for the quarter against each employee's PAN. Filed online via TRACES/the income tax e-filing portal. Required so the government can match withheld tax to individual taxpayer records.",
+        source: "https://ezhrm.in/hr-compliance-calendar-india-fy-2026-27/", sourceLabel: "ezhrm.in" },
       { when: "15 Jun/Sep/Dec/Mar", label: "Advance tax instalments",
-        detail: "Applies to the company's own corporate tax liability, not employee TDS \u2014 15%/45%/75%/100% of estimated annual tax paid cumulatively by each date. Paid via the income tax e-filing portal (Challan 280)." },
+        detail: "Applies to the company's own corporate tax liability, not employee TDS \u2014 15%/45%/75%/100% of estimated annual tax paid cumulatively by each date. Paid via the income tax e-filing portal (Challan 280).",
+        source: "https://ezhrm.in/hr-compliance-calendar-india-fy-2026-27/", sourceLabel: "ezhrm.in" },
       { when: "15 Jun", label: "Form 16 issued to employees",
-        detail: "A certificate (not a payment) summarising salary paid and TDS deducted for the FY, generated from TRACES after the Q4 24Q return is filed, and handed to each employee for their own income tax return." },
+        detail: "A certificate (not a payment) summarising salary paid and TDS deducted for the FY, generated from TRACES after the Q4 24Q return is filed, and handed to each employee for their own income tax return.",
+        source: "https://accountx.in/payroll-compliance-checklist-india-2026/", sourceLabel: "accountx.in" },
       { when: "31 Jul", label: "Professional Tax \u2014 West Bengal (single annual payment, not monthly)",
-        detail: "One lump-sum annual PT payment instead of 12 monthly ones \u2014 amount is the sum of the monthly slab rate x 12 for each employee. Paid via the West Bengal Commercial Taxes Directorate portal." },
+        detail: "One lump-sum annual PT payment instead of 12 monthly ones \u2014 amount is the sum of the monthly slab rate x 12 for each employee. Paid via the West Bengal Commercial Taxes Directorate portal.",
+        source: "https://www.zoho.com/in/payroll/academy/taxes-and-compliance/professional-tax-rules.html", sourceLabel: "zoho.com" },
       { when: "Aug & Jan", label: "Professional Tax \u2014 Tamil Nadu (half-yearly: Apr\u2013Sep due Aug, Oct\u2013Mar due Jan)",
-        detail: "Half-yearly slab amount based on average half-yearly gross salary, paid via the Tamil Nadu local body / Greater Chennai Corporation PT portal depending on where the establishment is registered." },
+        detail: "Half-yearly slab amount based on average half-yearly gross salary, paid via the Tamil Nadu local body / Greater Chennai Corporation PT portal depending on where the establishment is registered.",
+        source: "https://www.incorpx.io/blog/professional-tax-registration-state-wise-guide", sourceLabel: "incorpx.io" },
     ],
     professionalTax: [
       { state: "Maharashtra", due: "15th of following month", note: "moved from end-of-month, effective Mar 2026; women exempt up to \u20b925,000/mo",
-        detail: "Slabs (2026): nil up to \u20b97,500 (men) / \u20b925,000 (women); \u20b9175/month for \u20b97,501\u201310,000; \u20b9200/month above \u20b910,000 (\u20b9300 in February to reach the \u20b92,500 annual cap)." },
+        detail: "Slabs (2026): nil up to \u20b97,500 (men) / \u20b925,000 (women); \u20b9175/month for \u20b97,501\u201310,000; \u20b9200/month above \u20b910,000 (\u20b9300 in February to reach the \u20b92,500 annual cap).",
+        source: "https://ezhrm.in/professional-tax-india-2026-state-wise-slabs-filing-guide/", sourceLabel: "ezhrm.in" },
       { state: "Karnataka", due: "20th of following month", note: "exemption raised to \u20b925,000/mo in 2026",
-        detail: "Nil up to \u20b925,000/month gross; \u20b9200/month above that threshold." },
+        detail: "Nil up to \u20b925,000/month gross; \u20b9200/month above that threshold.",
+        source: "https://futurexsolutions.com/professional-tax-india/", sourceLabel: "futurexsolutions.com" },
       { state: "Telangana", due: "10th of following month", note: "exempt up to \u20b915,000/mo; \u20b9150 for \u20b915,001\u201320,000; \u20b9200 above",
-        detail: "Nil up to \u20b915,000/month; \u20b9150/month for \u20b915,001\u201320,000; \u20b9200/month above \u20b920,000." },
+        detail: "Nil up to \u20b915,000/month; \u20b9150/month for \u20b915,001\u201320,000; \u20b9200/month above \u20b920,000.",
+        source: "https://hrengage.ai/compliance/professional-tax/telangana", sourceLabel: "hrengage.ai" },
       { state: "Andhra Pradesh", due: "10th of following month", note: "similar structure to Telangana",
-        detail: "Slab structure mirrors Telangana's (both states share the pre-bifurcation Act) \u2014 confirm current AP-specific notification before relying on exact cutoffs." },
+        detail: "Slab structure mirrors Telangana's (both states share the pre-bifurcation Act) \u2014 confirm current AP-specific notification before relying on exact cutoffs.",
+        source: "https://futurexsolutions.com/professional-tax-india/", sourceLabel: "futurexsolutions.com (general list only \u2014 AP-specific slab not directly confirmed)" },
       { state: "West Bengal", due: "31 Jul (annual)", note: "single annual payment for the full FY, not monthly",
-        detail: "Slab-based on monthly gross salary, capped at the statutory \u20b92,500/year maximum; paid as one annual sum rather than monthly." },
+        detail: "Slab-based on monthly gross salary, capped at the statutory \u20b92,500/year maximum; paid as one annual sum rather than monthly.",
+        source: "https://www.zoho.com/in/payroll/academy/taxes-and-compliance/professional-tax-rules.html", sourceLabel: "zoho.com" },
       { state: "Tamil Nadu", due: "Aug (Apr\u2013Sep) & Jan (Oct\u2013Mar)", note: "half-yearly, not monthly",
-        detail: "Slab based on average monthly gross salary over the half-year period, capped at \u20b92,500/year in total across both instalments." },
+        detail: "Slab based on average monthly gross salary over the half-year period, capped at \u20b92,500/year in total across both instalments.",
+        source: "https://www.incorpx.io/blog/professional-tax-registration-state-wise-guide", sourceLabel: "incorpx.io" },
       { state: "Gujarat", due: "15th of following month", note: "",
-        detail: "Slab-based on monthly gross salary; check the current Gujarat PT Act notification for exact band cutoffs, capped at \u20b92,500/year." },
+        detail: "Slab-based on monthly gross salary; check the current Gujarat PT Act notification for exact band cutoffs, capped at \u20b92,500/year.",
+        source: "https://treelife.in/taxation/professional-tax-compliance-in-india/", sourceLabel: "treelife.in" },
       { state: "Madhya Pradesh", due: "10th of following month", note: "",
-        detail: "Slab-based on monthly gross salary, capped at \u20b92,500/year; paid via the MP Commercial Tax Department portal." },
+        detail: "Slab-based on monthly gross salary, capped at \u20b92,500/year; paid via the MP Commercial Tax Department portal.",
+        source: "https://treelife.in/taxation/professional-tax-compliance-in-india/", sourceLabel: "treelife.in" },
       { state: "Not levied", due: "\u2014", note: "Delhi, Haryana, Punjab, Uttar Pradesh, Rajasthan, Himachal Pradesh, Goa, Uttarakhand, J&K, Ladakh, Chandigarh, Odisha (abolished from FY26\u201327)",
-        detail: "No Professions Tax Act in force \u2014 no deduction, no filing, regardless of employee salary." },
+        detail: "No Professions Tax Act in force \u2014 no deduction, no filing, regardless of employee salary.",
+        source: "https://treelife.in/taxation/professional-tax-compliance-in-india/", sourceLabel: "treelife.in" },
     ]
   },
   { id: "sg", name: "Singapore", color: "#8B2FC9",
     monthly: [ { day: 14, label: "CPF contribution + Skills Development Levy (SDL)", note: "",
-      detail: "CPF: split by age band on Ordinary Wages up to the monthly ceiling (~S$7,400 in 2026) plus Additional Wages up to an annual ceiling \u2014 e.g. under-55s pay 20% employee / 17% employer. Funds retirement, healthcare and housing savings for Citizens/PRs only (not foreign employees). SDL: 0.25% of monthly remuneration (min S$2, max S$11.25), charged on every employee including foreigners, to fund SkillsFuture training subsidies. Both are paid together via CPF EZPay or the CPF e-Submission portal." } ],
+      detail: "CPF: split by age band on Ordinary Wages up to the monthly ceiling (~S$7,400 in 2026) plus Additional Wages up to an annual ceiling \u2014 e.g. under-55s pay 20% employee / 17% employer. Funds retirement, healthcare and housing savings for Citizens/PRs only (not foreign employees). SDL: 0.25% of monthly remuneration (min S$2, max S$11.25), charged on every employee including foreigners, to fund SkillsFuture training subsidies. Both are paid together via CPF EZPay or the CPF e-Submission portal.",
+      source: "https://rafflescorporateservices.com/singapore-payroll-cpf-guide-2026-rates-deadlines/", sourceLabel: "rafflescorporateservices.com" } ],
     annual: [
       { when: "1 Mar", label: "IR8A employee income submission to IRAS (AIS employers file electronically)",
-        detail: "Not a payment \u2014 a declaration of each employee's total employment income, bonuses, benefits-in-kind and CPF for the prior calendar year, submitted via myTax Portal (AIS employers) so IRAS can pre-fill employee tax returns." },
+        detail: "Not a payment \u2014 a declaration of each employee's total employment income, bonuses, benefits-in-kind and CPF for the prior calendar year, submitted via myTax Portal (AIS employers) so IRAS can pre-fill employee tax returns.",
+        source: "https://www.commenda.io/blog/ir8a-filing-in-singapore", sourceLabel: "commenda.io" },
       { when: "Event-based", label: "IR21 tax clearance — file \u22651 month before a foreign employee's departure/cessation",
-        detail: "Employer withholds all final monies owed to a departing foreign employee and files IR21 so IRAS can compute final tax liability before releasing the balance \u2014 exists to stop non-residents leaving with unpaid Singapore tax." },
+        detail: "Employer withholds all final monies owed to a departing foreign employee and files IR21 so IRAS can compute final tax liability before releasing the balance \u2014 exists to stop non-residents leaving with unpaid Singapore tax.",
+        source: "https://www.singaporesecretaryservices.com/singapore-payroll-cpf-guide-2026-rates-deadlines-employer-obligations/", sourceLabel: "singaporesecretaryservices.com" },
     ]
   },
   { id: "au", name: "Australia", color: "#1E5AA8",
     monthly: [
       { day: null, label: "Superannuation Guarantee — paid within 7 business days of each payday", note: "Payday Super, effective from 1 Jul 2026; replaces the old quarterly cycle",
-        detail: "12% of Ordinary Time Earnings (OTE) \u2014 base pay plus most allowances and commissions, excluding overtime. Funds the employee's compulsory retirement (superannuation) account. Paid electronically via SuperStream-compliant clearing house or payroll software direct to the employee's chosen fund; from FY2026\u201327 it must land within 7 business days of each pay run, not quarterly." },
+        detail: "12% of Ordinary Time Earnings (OTE) \u2014 base pay plus most allowances and commissions, excluding overtime. Funds the employee's compulsory retirement (superannuation) account. Paid electronically via SuperStream-compliant clearing house or payroll software direct to the employee's chosen fund; from FY2026\u201327 it must land within 7 business days of each pay run, not quarterly.",
+        source: "https://www.ato.gov.au/businesses-and-organisations/super-for-employers/payday-super/payday-super-how-to-manage-super-during-the-changeover", sourceLabel: "ato.gov.au" },
       { day: null, label: "STP (Single Touch Payroll) report — each pay event", note: "",
-        detail: "Not a payment \u2014 payroll software transmits gross pay, PAYG withheld, and super liability to the ATO automatically at each pay run, so the ATO has real-time visibility instead of waiting for quarterly/annual filings." },
+        detail: "Not a payment \u2014 payroll software transmits gross pay, PAYG withheld, and super liability to the ATO automatically at each pay run, so the ATO has real-time visibility instead of waiting for quarterly/annual filings.",
+        source: "https://cadanapay.com/blog/employer-payroll-compliance-in-australia-complete-guide-to-ato-payg-withholding-super-and-stp", sourceLabel: "cadanapay.com" },
     ],
     annual: [ { when: "14 Jul", label: "STP finalisation declaration for the FY just ended",
-      detail: "A declaration (via STP software) confirming the year's payroll data is complete and correct, which pre-fills each employee's income tax return in myGov \u2014 no separate payment involved." } ]
+      detail: "A declaration (via STP software) confirming the year's payroll data is complete and correct, which pre-fills each employee's income tax return in myGov \u2014 no separate payment involved.",
+      source: "https://cadanapay.com/blog/employer-payroll-compliance-in-australia-complete-guide-to-ato-payg-withholding-super-and-stp", sourceLabel: "cadanapay.com" } ]
   },
   { id: "jp", name: "Japan", color: "#B0313F",
     monthly: [ { day: 10, label: "Income tax withholding (gensen choshu) + residence tax remittance", note: "",
-      detail: "Income tax: withheld using the NTA's monthly withholding tax tables against taxable salary (after social insurance deductions), as a provisional figure later trued up in December's nenmatsu chosei. Residence tax: a fixed monthly instalment (from June) based on the employee's prior-year income, as notified by their municipality. Both are remitted to the tax office/municipality via bank transfer using the employer's withholding tax account." } ],
+      detail: "Income tax: withheld using the NTA's monthly withholding tax tables against taxable salary (after social insurance deductions), as a provisional figure later trued up in December's nenmatsu chosei. Residence tax: a fixed monthly instalment (from June) based on the employee's prior-year income, as notified by their municipality. Both are remitted to the tax office/municipality via bank transfer using the employer's withholding tax account.",
+      source: "https://www.aqpartners.jp/blog/japan-payroll-guide", sourceLabel: "aqpartners.jp" } ],
     annual: [
       { when: "1 Jun\u201310 Jul", label: "Annual labour insurance report & premium settlement",
-        detail: "Reconciles the estimated labour insurance premium paid during the year against actual total wages paid, settling any balance due or refund \u2014 filed with the Labour Bureau." },
+        detail: "Reconciles the estimated labour insurance premium paid during the year against actual total wages paid, settling any balance due or refund \u2014 filed with the Labour Bureau.",
+        source: "https://cpasayu.com/en/2026/06/03/japan-payroll-social-insurance-foreign-company/", sourceLabel: "cpasayu.com" },
       { when: "December", label: "Year-end tax adjustment (nenmatsu chosei) run with final payroll",
-        detail: "Recalculates each employee's actual annual income tax liability (vs. the provisional monthly withholding), applying dependant, insurance and housing-loan deductions, then refunds or collects the difference through December's payroll \u2014 replaces the need for most employees to file their own tax return." },
+        detail: "Recalculates each employee's actual annual income tax liability (vs. the provisional monthly withholding), applying dependant, insurance and housing-loan deductions, then refunds or collects the difference through December's payroll \u2014 replaces the need for most employees to file their own tax return.",
+        source: "https://www.aqpartners.jp/blog/japan-payroll-services", sourceLabel: "aqpartners.jp" },
       { when: "31 Jan", label: "Withholding certificates (gensen choshu hyo) + municipal salary reports issued",
-        detail: "Certificates given to each employee, plus a salary report filed with each employee's municipality, which the municipality then uses to calculate the following year's residence tax instalments." },
+        detail: "Certificates given to each employee, plus a salary report filed with each employee's municipality, which the municipality then uses to calculate the following year's residence tax instalments.",
+        source: "https://www.aqpartners.jp/blog/japan-payroll-services", sourceLabel: "aqpartners.jp" },
     ]
   },
   { id: "hk", name: "Hong Kong", color: "#2D8659",
     monthly: [ { day: 10, label: "MPF contribution remittance", note: "",
-      detail: "5% of relevant income from each of employer and employee, on income between HK$7,100 and HK$30,000/month (employee contribution waived below the floor; employer still contributes), capped at HK$1,500/side/month \u2014 a cap under proposal to rise toward HK$40,000 income / HK$2,000 contribution. Funds the employee's MPF retirement account. Paid to the employee's chosen MPF trustee via the eMPF platform or the trustee's own portal." } ],
+      detail: "5% of relevant income from each of employer and employee, on income between HK$7,100 and HK$30,000/month (employee contribution waived below the floor; employer still contributes), capped at HK$1,500/side/month \u2014 a cap under proposal to rise toward HK$40,000 income / HK$2,000 contribution. Funds the employee's MPF retirement account. Paid to the employee's chosen MPF trustee via the eMPF platform or the trustee's own portal.",
+      source: "https://www.hrforte.com/taxtok-hrforte/hong-kong-payroll-employment-law-cheat-sheet-2025-edition", sourceLabel: "hrforte.com" } ],
     annual: [
       { when: "~Apr\u2013May", label: "Employer's Return (BIR56A + IR56B) \u2014 due within 1 month of IRD issuance",
-        detail: "Not a payment \u2014 a return reporting each employee's salary, bonuses, benefits and MPF contributions for the year ended 31 March, so IRD can assess each employee's Salaries Tax (Hong Kong doesn't withhold income tax monthly like most countries \u2014 employees pay their own assessed tax directly)." },
+        detail: "Not a payment \u2014 a return reporting each employee's salary, bonuses, benefits and MPF contributions for the year ended 31 March, so IRD can assess each employee's Salaries Tax (Hong Kong doesn't withhold income tax monthly like most countries \u2014 employees pay their own assessed tax directly).",
+        source: "https://www.hrforte.com/taxtok-hrforte/hong-kong-employers-return-2026-bir56a-mpf-guide", sourceLabel: "hrforte.com" },
       { when: "Event-based", label: "IR56E (new hire) within 3 months; IR56F/IR56G (leavers) \u22651 month before cessation/departure",
-        detail: "Notifies IRD of new hires (so a tax file is opened) and of departures (IR56F for those staying in HK, IR56G plus a withhold-until-clearance obligation for those leaving Hong Kong, to prevent departure with unpaid Salaries Tax)." },
+        detail: "Notifies IRD of new hires (so a tax file is opened) and of departures (IR56F for those staying in HK, IR56G plus a withhold-until-clearance obligation for those leaving Hong Kong, to prevent departure with unpaid Salaries Tax).",
+        source: "https://sleek.com/hk/resources/ir56-forms/", sourceLabel: "sleek.com" },
     ]
   },
   { id: "ph", name: "Philippines", color: "#F4A300",
     monthly: [
       { day: 10, label: "BIR withholding tax (Form 1601-C)", note: "",
-        detail: "Withheld using BIR's graduated tax table (0\u201335%) against taxable compensation (gross pay less mandatory SSS/PhilHealth/Pag-IBIG employee shares and the non-taxable portion of 13th month pay). Remitted via eBIRForms or eFPS; the employer acts purely as a collection agent \u2014 liability for under-withholding sits with the employer, not the employee." },
+        detail: "Withheld using BIR's graduated tax table (0\u201335%) against taxable compensation (gross pay less mandatory SSS/PhilHealth/Pag-IBIG employee shares and the non-taxable portion of 13th month pay). Remitted via eBIRForms or eFPS; the employer acts purely as a collection agent \u2014 liability for under-withholding sits with the employer, not the employee.",
+        source: "https://cadanapay.com/blog/employer-payroll-compliance-in-the-philippines-complete-guide-to-bir-sss-philhealth-and-pag-ibig", sourceLabel: "cadanapay.com" },
       { day: 15, label: "SSS contribution", note: "exact date staggered by employer number; verify SSS schedule",
-        detail: "15% of the employee's Monthly Salary Credit (MSC, capped between \u20b15,000\u2013\u20b135,000), split 10% employer / 5% employee, funding retirement, sickness and disability benefits. Paid via My.SSS Employer using a generated Payment Reference Number through partner banks or e-wallets." },
+        detail: "15% of the employee's Monthly Salary Credit (MSC, capped between \u20b15,000\u2013\u20b135,000), split 10% employer / 5% employee, funding retirement, sickness and disability benefits. Paid via My.SSS Employer using a generated Payment Reference Number through partner banks or e-wallets.",
+        source: "https://cadanapay.com/blog/employer-payroll-compliance-in-the-philippines-complete-guide-to-bir-sss-philhealth-and-pag-ibig", sourceLabel: "cadanapay.com" },
       { day: 15, label: "PhilHealth contribution", note: "verify exact digit-based schedule via EPRS",
-        detail: "5% of monthly basic salary (floor \u20b110,000, ceiling \u20b1100,000), split 50/50 between employer and employee, funding national health insurance. Paid and reported through the PhilHealth EPRS system." },
+        detail: "5% of monthly basic salary (floor \u20b110,000, ceiling \u20b1100,000), split 50/50 between employer and employee, funding national health insurance. Paid and reported through the PhilHealth EPRS system.",
+        source: "https://cadanapay.com/blog/employer-payroll-compliance-in-the-philippines-complete-guide-to-bir-sss-philhealth-and-pag-ibig", sourceLabel: "cadanapay.com" },
       { day: 12, label: "Pag-IBIG contribution", note: "typically 10th\u201315th",
-        detail: "Up to 4% of monthly compensation combined (employer + employee shares, rate depends on salary band), funding the employee's housing savings/loan eligibility fund. Paid via the Pag-IBIG Virtual Pag-IBIG portal or accredited collection partners." },
+        detail: "Up to 4% of monthly compensation combined (employer + employee shares, rate depends on salary band), funding the employee's housing savings/loan eligibility fund. Paid via the Pag-IBIG Virtual Pag-IBIG portal or accredited collection partners.",
+        source: "https://sprout.ph/articles/the-ultimate-philippine-hr-compliance-calendar/", sourceLabel: "sprout.ph" },
     ],
     annual: [
       { when: "31 Jan", label: "Annual return / BIR Form 2316 to employees",
-        detail: "A certificate summarising the year's compensation and tax withheld, issued after December's tax annualisation reconciles total withholding against actual annual tax due \u2014 not a payment, a required disclosure." },
+        detail: "A certificate summarising the year's compensation and tax withheld, issued after December's tax annualisation reconciles total withholding against actual annual tax due \u2014 not a payment, a required disclosure.",
+        source: "https://talinohr.com/blog/philippine-payroll-compliance-guide-2026", sourceLabel: "talinohr.com" },
       { when: "24 Dec", label: "13th month pay deadline",
-        detail: "A mandatory bonus equal to 1/12 of the employee's total basic salary for the year, required under PD 851 regardless of company performance; paid directly to the employee, not to a government agency." },
+        detail: "A mandatory bonus equal to 1/12 of the employee's total basic salary for the year, required under PD 851 regardless of company performance; paid directly to the employee, not to a government agency.",
+        source: "https://talinohr.com/blog/philippine-payroll-compliance-guide-2026", sourceLabel: "talinohr.com" },
     ]
   },
   { id: "my", name: "Malaysia", color: "#0F7A4E",
     monthly: [ { day: 15, label: "EPF, SOCSO, EIS, PCB (MTD) and HRD Levy", note: "all four/five due the same date",
-      detail: "EPF (KWSP): ~11% employee / 12\u201313% employer (rate varies by wage band) of monthly wages, for retirement savings. SOCSO: employer/employee split on a wage-band contribution table, funding employment-injury and invalidity protection. EIS: 0.2% employer + 0.2% employee on wages up to RM6,000, funding retrenchment support. PCB/MTD: monthly income tax withheld per LHDN's schedule or computerised method, projecting the employee's annual tax liability. HRD Levy: 1% of monthly payroll for employers with 10+ Malaysian staff in covered sectors, funding employee training. All five are remitted via KWSP i-Akaun, PERKESO ASSIST, and LHDN e-PCB respectively." } ],
+      detail: "EPF (KWSP): ~11% employee / 12\u201313% employer (rate varies by wage band) of monthly wages, for retirement savings. SOCSO: employer/employee split on a wage-band contribution table, funding employment-injury and invalidity protection. EIS: 0.2% employer + 0.2% employee on wages up to RM6,000, funding retrenchment support. PCB/MTD: monthly income tax withheld per LHDN's schedule or computerised method, projecting the employee's annual tax liability. HRD Levy: 1% of monthly payroll for employers with 10+ Malaysian staff in covered sectors, funding employee training. All five are remitted via KWSP i-Akaun, PERKESO ASSIST, and LHDN e-PCB respectively.",
+      source: "https://greatpyramid.com.my/malaysia-payroll-compliance-guide-2026-epf-socso-eis-pcb-e-invoicing/", sourceLabel: "greatpyramid.com.my" } ],
     annual: [
       { when: "30 Apr", label: "Form E annual employer declaration",
-        detail: "Not a payment \u2014 an employer-level return to LHDN listing every employee and their annual remuneration/PCB deducted, used to cross-check individual tax filings." },
+        detail: "Not a payment \u2014 an employer-level return to LHDN listing every employee and their annual remuneration/PCB deducted, used to cross-check individual tax filings.",
+        source: "https://pandahrms.com/malaysia-payroll-deadlines-penalties-2026-epf-socso-pcb-form-e-hrd-levy-employer-guide/", sourceLabel: "pandahrms.com" },
       { when: "28/29 Feb", label: "Form EA / EC issued to employees",
-        detail: "A certificate given to each employee summarising annual income and PCB withheld, which they use to file their own personal income tax return." },
+        detail: "A certificate given to each employee summarising annual income and PCB withheld, which they use to file their own personal income tax return.",
+        source: "https://finopsys.ai/blogs/malaysia-payroll-compliance-guide-2026-epf-socso-eis-pcb-and-tax-filing", sourceLabel: "finopsys.ai" },
     ]
   },
   { id: "id", name: "Indonesia", color: "#CE1126",
     monthly: [
       { day: 10, label: "BPJS Kesehatan (health insurance) payment", note: "",
-        detail: "5% of monthly salary total \u2014 4% employer, 1% employee \u2014 funding national health insurance coverage. Paid via the BPJS Kesehatan employer portal." },
+        detail: "5% of monthly salary total \u2014 4% employer, 1% employee \u2014 funding national health insurance coverage. Paid via the BPJS Kesehatan employer portal.",
+        source: "https://livenworkindonesia.com/tax-accountancy/payroll-management-in-indonesia-the-complete-2026-guide-for-employers/", sourceLabel: "livenworkindonesia.com" },
       { day: 15, label: "BPJS Ketenagakerjaan (employment social security) payment", note: "",
-        detail: "Combines several programmes \u2014 work accident (JKK, 0.24\u20131.74% by industry risk class), death benefit (JKM, 0.3%), old-age savings (JHT, 5.7% split 3.7% employer/2% employee), and pension (JP) \u2014 roughly 6.24\u20137.74% employer share in total. Paid via the BPJS Ketenagakerjaan employer portal." },
+        detail: "Combines several programmes \u2014 work accident (JKK, 0.24\u20131.74% by industry risk class), death benefit (JKM, 0.3%), old-age savings (JHT, 5.7% split 3.7% employer/2% employee), and pension (JP) \u2014 roughly 6.24\u20137.74% employer share in total. Paid via the BPJS Ketenagakerjaan employer portal.",
+        source: "https://aniday.com/en/blog/indonesia-payroll-guide-bpjs-contributions-and-pph-21-tax-3361", sourceLabel: "aniday.com" },
       { day: 10, label: "PPh 21 income tax payment", note: "",
-        detail: "Withheld using the TER (Tarif Efektif Rata-rata / effective average rate) method against monthly gross income \u2014 a simplified flat percentage by income bracket, replacing manual progressive calculation each month. Paid via a tax payment slip (kode billing) through DJP Online / bank channels." },
+        detail: "Withheld using the TER (Tarif Efektif Rata-rata / effective average rate) method against monthly gross income \u2014 a simplified flat percentage by income bracket, replacing manual progressive calculation each month. Paid via a tax payment slip (kode billing) through DJP Online / bank channels.",
+        source: "https://indonesia.acclime.com/guides/payroll-taxes/", sourceLabel: "indonesia.acclime.com" },
       { day: 20, label: "PPh 21 monthly reporting", note: "",
-        detail: "Not a payment \u2014 the SPT Masa PPh 21 return filed via CoreTax/DJP Online, reporting the withholding actually remitted on the 10th." },
+        detail: "Not a payment \u2014 the SPT Masa PPh 21 return filed via CoreTax/DJP Online, reporting the withholding actually remitted on the 10th.",
+        source: "https://oneglobalpayroll.com/countries/indonesia/", sourceLabel: "oneglobalpayroll.com" },
     ],
     annual: [
       { when: "Event-based", label: "THR (religious holiday allowance) \u2014 pay \u22657 days before each employee's relevant holiday",
-        detail: "A mandatory bonus of one month's salary (pro-rated for <1 year of service) tied to each employee's own religious calendar (Eid, Christmas, Nyepi, Vesak) \u2014 paid directly to the employee, not a government remittance." },
+        detail: "A mandatory bonus of one month's salary (pro-rated for <1 year of service) tied to each employee's own religious calendar (Eid, Christmas, Nyepi, Vesak) \u2014 paid directly to the employee, not a government remittance.",
+        source: "https://recruitgo.com/payroll/indonesia/", sourceLabel: "recruitgo.com" },
       { when: "December", label: "PPh 21 annual reconciliation (TER method trues up to progressive rates)",
-        detail: "December's payroll recalculates the full year's tax using the actual progressive rates (5\u201335%) against the TER amounts withheld monthly, and collects or refunds the difference \u2014 the same true-up concept as Japan's nenmatsu chosei." },
+        detail: "December's payroll recalculates the full year's tax using the actual progressive rates (5\u201335%) against the TER amounts withheld monthly, and collects or refunds the difference \u2014 the same true-up concept as Japan's nenmatsu chosei.",
+        source: "https://recruitgo.com/payroll/indonesia/", sourceLabel: "recruitgo.com" },
     ]
   },
   { id: "th", name: "Thailand", color: "#00247D",
     monthly: [
       { day: 7, label: "PND.1 withholding tax (paper filing)", note: "15th if e-filed",
-        detail: "Withheld against monthly salary using progressive personal income tax rates (5\u201335%) after standard allowances, as a provisional monthly figure. Filed and paid via the Revenue Department's e-Filing portal (or in person for paper filing, which carries the earlier 7th-of-month deadline)." },
+        detail: "Withheld against monthly salary using progressive personal income tax rates (5\u201335%) after standard allowances, as a provisional monthly figure. Filed and paid via the Revenue Department's e-Filing portal (or in person for paper filing, which carries the earlier 7th-of-month deadline).",
+        source: "https://www.gentlelawibl.com/post/thailand-pnd-1-filing-2026-payroll-withholding-tax-deadlines-e-filing-and-a-foreign-sme-checklis", sourceLabel: "gentlelawibl.com" },
       { day: 15, label: "Social Security Fund (SSF) contribution", note: "",
-        detail: "5% employer + 5% employee of monthly wages, capped around a THB 15,000\u201317,500 wage ceiling (figures have moved recently \u2014 confirm the current cap), funding healthcare, unemployment and pension benefits. Paid via the SSO e-Service portal." },
+        detail: "5% employer + 5% employee of monthly wages, capped around a THB 15,000\u201317,500 wage ceiling (figures have moved recently \u2014 confirm the current cap), funding healthcare, unemployment and pension benefits. Paid via the SSO e-Service portal.",
+        source: "https://aniday.com/en/blog/thailand-payroll-guide-social-security-pit-and-provident-fund-3369", sourceLabel: "aniday.com" },
     ],
     annual: [
       { when: "15 Feb", label: "Withholding tax certificates issued to employees",
-        detail: "A certificate summarising the year's salary and PND.1 tax withheld, which employees use to file their own annual PND.90/91 personal tax return." },
+        detail: "A certificate summarising the year's salary and PND.1 tax withheld, which employees use to file their own annual PND.90/91 personal tax return.",
+        source: "https://kreston-thailand.com/year-end-tax-submissions-in-thailand-a-practical-guide-for-hr-and-payroll-teams/", sourceLabel: "kreston-thailand.com" },
       { when: "28 Feb", label: "PND.1 Kor annual summary",
-        detail: "Not a separate payment \u2014 an annual reconciliation return summarising all twelve months of PND.1 withholding filed during the year, submitted to the Revenue Department." },
+        detail: "Not a separate payment \u2014 an annual reconciliation return summarising all twelve months of PND.1 withholding filed during the year, submitted to the Revenue Department.",
+        source: "https://www.gentlelawibl.com/post/thailand-pnd-1-filing-2026-payroll-withholding-tax-deadlines-e-filing-and-a-foreign-sme-checklis", sourceLabel: "gentlelawibl.com" },
     ]
   },
 ];
@@ -339,9 +393,12 @@ function setView(v) {
 }
 
 function escapeHtml(str) { const d = document.createElement("div"); d.textContent = str; return d.innerHTML; }
-function detailsBlock(text) {
+function detailsBlock(text, sourceUrl, sourceLabel) {
   if (!text) return "";
-  return `<details class="calc-detail"><summary>How it's calculated & paid</summary><p>${escapeHtml(text)}</p></details>`;
+  const sourceHtml = sourceUrl
+    ? `<a href="${sourceUrl}" target="_blank" rel="noopener noreferrer" class="source-link">Source: ${escapeHtml(sourceLabel || sourceUrl)} \u2197</a>`
+    : "";
+  return `<details class="calc-detail"><summary>How it's calculated & paid</summary><p>${escapeHtml(text)}</p>${sourceHtml}</details>`;
 }
 
 function setIndiaState(v) { indiaState = v; render(); }
@@ -384,7 +441,7 @@ function render() {
     let items = [];
     selected.forEach(c => {
       c.monthly.forEach((m, idx) => {
-        items.push({ country: c, day: m.day, label: m.label, note: m.note, detail: m.detail, key: c.id + "-m" + idx + "-" + monthKey });
+        items.push({ country: c, day: m.day, label: m.label, note: m.note, detail: m.detail, source: m.source, sourceLabel: m.sourceLabel, key: c.id + "-m" + idx + "-" + monthKey });
       });
     });
     items.sort((a, b) => (a.day ?? 99) - (b.day ?? 99));
@@ -417,7 +474,7 @@ function render() {
             </div>
             ${item.note ? `<div class="note">${escapeHtml(item.note)}</div>` : ""}
             ${actualLine}
-            ${detailsBlock(item.detail)}
+            ${detailsBlock(item.detail, item.source, item.sourceLabel)}
           </div>
         </li>
       `;
@@ -443,7 +500,7 @@ function render() {
                   <span class="ref-day">${m.day ?? "\u2014"}</span>
                   <span>${escapeHtml(m.label)}${m.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(m.note)}</span>` : ""}</span>
                 </div>
-                ${detailsBlock(m.detail)}
+                ${detailsBlock(m.detail, m.source, m.sourceLabel)}
               </div>`).join("")}
             <p class="section-label" style="margin-top:10px">Annual / event-based</p>
             ${c.annual.map(a => `
@@ -452,7 +509,7 @@ function render() {
                   <span class="ref-when">${a.when}</span>
                   <span>${escapeHtml(a.label)}</span>
                 </div>
-                ${detailsBlock(a.detail)}
+                ${detailsBlock(a.detail, a.source, a.sourceLabel)}
               </div>`).join("")}
             ${c.professionalTax ? `
               <p class="section-label" style="margin-top:10px">Professional Tax \u2014 by state</p>
@@ -462,7 +519,7 @@ function render() {
                     <span class="ref-when" style="width:118px">${escapeHtml(p.state)}</span>
                     <span>${escapeHtml(p.due)}${p.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(p.note)}</span>` : ""}</span>
                   </div>
-                  ${detailsBlock(p.detail)}
+                  ${detailsBlock(p.detail, p.source, p.sourceLabel)}
                 </div>`).join("")}
             ` : ""}
           </div>
