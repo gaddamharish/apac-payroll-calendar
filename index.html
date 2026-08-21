@@ -77,12 +77,27 @@ const COUNTRIES = [
       { day: 7, label: "TDS deposit on salary (Challan 281)", note: "30 Apr instead, for March salary TDS" },
       { day: 15, label: "EPF contribution + ECR filing", note: "" },
       { day: 15, label: "ESI contribution", note: "" },
+      { day: 10, label: "Professional Tax \u2014 Telangana, Andhra Pradesh & Madhya Pradesh", note: "" },
+      { day: 15, label: "Professional Tax \u2014 Maharashtra & Gujarat", note: "Maharashtra moved from end-of-month to 15th, effective Mar 2026" },
+      { day: 20, label: "Professional Tax \u2014 Karnataka", note: "" },
     ],
     annual: [
       { when: "31 May/Jul/Oct/Jan", label: "Form 24Q quarterly TDS return (Form 138 under Income Tax Act 2025)" },
       { when: "15 Jun/Sep/Dec/Mar", label: "Advance tax instalments" },
       { when: "15 Jun", label: "Form 16 issued to employees" },
-      { when: "28/29 Feb", label: "Professional Tax annual return (state-specific; verify local due date)" },
+      { when: "31 Jul", label: "Professional Tax \u2014 West Bengal (single annual payment, not monthly)" },
+      { when: "Aug & Jan", label: "Professional Tax \u2014 Tamil Nadu (half-yearly: Apr\u2013Sep due Aug, Oct\u2013Mar due Jan)" },
+    ],
+    professionalTax: [
+      { state: "Maharashtra", due: "15th of following month", note: "moved from end-of-month, effective Mar 2026; women exempt up to \u20b925,000/mo" },
+      { state: "Karnataka", due: "20th of following month", note: "exemption raised to \u20b925,000/mo in 2026" },
+      { state: "Telangana", due: "10th of following month", note: "exempt up to \u20b915,000/mo; \u20b9150 for \u20b915,001\u201320,000; \u20b9200 above" },
+      { state: "Andhra Pradesh", due: "10th of following month", note: "similar structure to Telangana" },
+      { state: "West Bengal", due: "31 Jul (annual)", note: "single annual payment for the full FY, not monthly" },
+      { state: "Tamil Nadu", due: "Aug (Apr\u2013Sep) & Jan (Oct\u2013Mar)", note: "half-yearly, not monthly" },
+      { state: "Gujarat", due: "15th of following month", note: "" },
+      { state: "Madhya Pradesh", due: "10th of following month", note: "" },
+      { state: "Not levied", due: "\u2014", note: "Delhi, Haryana, Punjab, Uttar Pradesh, Rajasthan, Himachal Pradesh, Goa, Uttarakhand, J&K, Ladakh, Chandigarh, Odisha (abolished from FY26\u201327)" },
     ]
   },
   { id: "sg", name: "Singapore", color: "#8B2FC9",
@@ -257,6 +272,14 @@ function render() {
                 <span class="ref-when">${a.when}</span>
                 <span>${escapeHtml(a.label)}</span>
               </div>`).join("")}
+            ${c.professionalTax ? `
+              <p class="section-label" style="margin-top:10px">Professional Tax \u2014 by state</p>
+              ${c.professionalTax.map(p => `
+                <div class="ref-item">
+                  <span class="ref-when" style="width:118px">${escapeHtml(p.state)}</span>
+                  <span>${escapeHtml(p.due)}${p.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(p.note)}</span>` : ""}</span>
+                </div>`).join("")}
+            ` : ""}
           </div>
         </div>
       `).join("");
