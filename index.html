@@ -35,6 +35,8 @@
   .item-body.done { text-decoration: line-through; color: #B0AFA5; }
   .country-tag { font-size: 11px; font-weight: 500; margin-right: 8px; padding: 2px 6px; border-radius: 4px; }
   .note { font-size: 12px; color: #9A988E; margin-top: 2px; }
+  .actual-date { font-size: 12px; color: #B0313F; margin-top: 3px; font-weight: 500; }
+  .actual-date.muted { color: #9A988E; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
   .country-card { background: #fff; border: 1px solid #E5E3D8; border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
   .country-head { padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
   .country-head .dot { width: 10px; height: 10px; border-radius: 50%; }
@@ -66,7 +68,11 @@
   <p class="footer-note">
     Reference dates only, compiled from public guidance as of August 2026 — several markets have rules in transition
     (e.g. Australia's Payday Super phase-in, India's Income Tax Act 2025 form changes, Hong Kong's proposed MPF cap increase).
-    Confirm exact figures against the local authority or your in-country counsel before relying on them operationally.
+    "Actual payment date" adjustments use each country's major known 2026 public holidays and weekends; moon-sighting or
+    unconfirmed lunar-calendar holidays (Eid, some Hindu/Buddhist observances) aren't all included, so a shown date could
+    still shift. Malaysia brings the date forward (earlier) when it lands on a holiday; every other market pushes it back
+    (later) — both per each country's own stated convention. Confirm exact figures against the local authority or your
+    in-country counsel before relying on them operationally.
   </p>
 </div>
 
@@ -174,6 +180,47 @@ const COUNTRIES = [
 
 const STORAGE_KEY = "apac-payroll-done-v1";
 const MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const WEEKDAY_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+// Major known 2026 public holidays per country (government/bank closure days).
+// Moon-sighting/lunar-dependent dates not yet confirmed at source time are omitted rather than guessed.
+const HOLIDAYS = {
+  in: ["2026-01-26","2026-08-15","2026-10-02"],
+  sg: ["2026-01-01","2026-02-17","2026-02-18","2026-03-21","2026-04-03","2026-05-01","2026-05-27","2026-06-01","2026-08-10","2026-11-09","2026-12-25"],
+  au: ["2026-01-01","2026-01-26","2026-04-03","2026-04-06","2026-04-25","2026-12-25","2026-12-28"],
+  jp: ["2026-01-01","2026-01-12","2026-02-11","2026-02-23","2026-03-20","2026-04-29","2026-05-03","2026-05-04","2026-05-05","2026-05-06","2026-07-20","2026-08-11","2026-09-21","2026-09-22","2026-09-23","2026-10-12","2026-11-03","2026-11-23"],
+  hk: ["2026-01-01","2026-02-17","2026-02-18","2026-02-19","2026-04-03","2026-04-06","2026-05-01","2026-05-25","2026-07-01","2026-10-01","2026-10-19","2026-12-25","2026-12-26"],
+  ph: ["2026-01-01","2026-04-02","2026-04-03","2026-04-04","2026-04-09","2026-05-01","2026-06-12","2026-08-21","2026-08-31","2026-11-30","2026-12-08","2026-12-24","2026-12-25","2026-12-30","2026-12-31"],
+  my: ["2026-01-01","2026-02-17","2026-02-18","2026-03-21","2026-03-22","2026-03-23","2026-06-01","2026-06-02","2026-08-31","2026-09-16","2026-12-25"],
+  id: ["2026-01-01","2026-02-17","2026-05-01","2026-08-17","2026-12-25"],
+  th: ["2026-01-01","2026-01-02","2026-04-06","2026-04-13","2026-04-14","2026-04-15","2026-05-01","2026-05-04","2026-06-01","2026-07-28","2026-07-29","2026-07-30","2026-08-12","2026-10-13","2026-10-23","2026-12-05","2026-12-07","2026-12-10","2026-12-31"],
+};
+// Countries where the payment date, if it lands on a weekend/holiday, is brought forward to the
+// nearest earlier business day instead of pushed later (Malaysia's PT/EPF/SOCSO convention).
+const ROLLS_BACKWARD = new Set(["my"]);
+
+function pad(n) { return n < 10 ? "0" + n : "" + n; }
+function isoDate(y, m, d) { return `${y}-${pad(m)}-${pad(d)}`; }
+function isWeekend(date) { const day = date.getUTCDay(); return day === 0 || day === 6; }
+function isHoliday(countryId, date) {
+  const list = HOLIDAYS[countryId] || [];
+  const ds = date.toISOString().slice(0, 10);
+  return list.includes(ds);
+}
+function getAdjustedDate(countryId, year, month, day) {
+  if (day == null) return null;
+  let date = new Date(Date.UTC(year, month - 1, day));
+  const step = ROLLS_BACKWARD.has(countryId) ? -1 : 1;
+  let guard = 0;
+  while ((isWeekend(date) || isHoliday(countryId, date)) && guard < 15) {
+    date = new Date(date.getTime() + step * 86400000);
+    guard++;
+  }
+  return date;
+}
+function fmtShort(date) {
+  return `${WEEKDAY_NAMES[date.getUTCDay()]} ${date.getUTCDate()} ${MONTH_NAMES[date.getUTCMonth()].slice(0,3)}`;
+}
 const today = new Date();
 const monthKey = today.getFullYear() + "-" + (today.getMonth() + 1);
 
@@ -229,11 +276,23 @@ function render() {
     items.sort((a, b) => (a.day ?? 99) - (b.day ?? 99));
 
     let html = `<h2 class="title">${MONTH_NAMES[today.getMonth()]} ${today.getFullYear()}</h2>
-      <p class="hint">Recurring monthly deadlines, across selected markets, in date order.</p>`;
+      <p class="hint">Recurring monthly deadlines, across selected markets, in date order. Actual date accounts for weekends and major public holidays.</p>`;
     if (items.length === 0) {
       html += `<p class="empty">Select at least one country above.</p>`;
     } else {
-      html += `<ul class="items">` + items.map(item => `
+      html += `<ul class="items">` + items.map(item => {
+        let actualLine = "";
+        if (item.day != null) {
+          const nominal = new Date(Date.UTC(today.getFullYear(), today.getMonth(), item.day));
+          const adjusted = getAdjustedDate(item.country.id, today.getFullYear(), today.getMonth() + 1, item.day);
+          if (adjusted && adjusted.getTime() !== nominal.getTime()) {
+            const dir = ROLLS_BACKWARD.has(item.country.id) ? "brought forward to" : "shifts to";
+            actualLine = `<div class="actual-date">Falls on ${fmtShort(nominal)} \u2014 actual payment date ${dir} <strong>${fmtShort(adjusted)}</strong></div>`;
+          } else if (nominal) {
+            actualLine = `<div class="actual-date muted">${fmtShort(nominal)}</div>`;
+          }
+        }
+        return `
         <li class="item">
           <button class="check${done[item.key] ? " done" : ""}" onclick="toggleDone('${item.key}')" aria-label="Mark done">${done[item.key] ? "\u2713" : ""}</button>
           <div class="day" style="color:${item.country.color}">${item.day ?? "\u2014"}</div>
@@ -243,9 +302,11 @@ function render() {
               ${escapeHtml(item.label)}
             </div>
             ${item.note ? `<div class="note">${escapeHtml(item.note)}</div>` : ""}
+            ${actualLine}
           </div>
         </li>
-      `).join("") + `</ul>`;
+      `;
+      }).join("") + `</ul>`;
     }
     content.innerHTML = html;
   } else {
