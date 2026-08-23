@@ -29,35 +29,38 @@
   h2.title { font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 600; margin: 0 0 2px; }
   .hint { font-size: 12px; color: #9A988E; margin: 0 0 16px; }
   .empty { font-size: 14px; color: #9A988E; font-style: italic; }
-  ul.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
-  li.item { display: flex; align-items: flex-start; gap: 12px; background: #fff; border: 1px solid #E5E3D8; border-radius: 10px; padding: 12px 16px; }
+  ul.items { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  li.item { display: flex; align-items: flex-start; gap: 12px; background: #fff; border: 1px solid #ECEAE0; border-left: 3px solid #ECEAE0; border-radius: 8px; padding: 12px 16px; }
   .check { margin-top: 2px; width: 20px; height: 20px; border-radius: 5px; border: 1px solid #D9D7CE; flex-shrink: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; background: transparent; color: #fff; font-size: 12px; }
   .check.done { background: #2D5F4C; border-color: #2D5F4C; }
-  .day { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; width: 34px; flex-shrink: 0; }
+  .day { font-family: 'IBM Plex Mono', monospace; font-size: 14px; font-weight: 600; width: 28px; flex-shrink: 0; color: #9A988E; }
   .item-body.done { text-decoration: line-through; color: #B0AFA5; }
-  .country-tag { font-size: 11px; font-weight: 500; margin-right: 8px; padding: 2px 6px; border-radius: 4px; }
-  .note { font-size: 12px; color: #9A988E; margin-top: 2px; }
-  .actual-date { font-size: 12px; color: #B0313F; margin-top: 3px; font-weight: 500; }
-  .actual-date.muted { color: #9A988E; font-weight: 400; font-family: 'IBM Plex Mono', monospace; }
-  .country-card { background: #fff; border: 1px solid #E5E3D8; border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
-  .country-head { padding: 10px 16px; display: flex; align-items: center; gap: 8px; }
-  .country-head .dot { width: 10px; height: 10px; border-radius: 50%; }
-  .country-head h3 { font-family: 'Source Serif 4', serif; font-size: 16px; font-weight: 600; margin: 0; }
-  .country-body { padding: 12px 16px; }
-  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: #9A988E; font-weight: 500; margin: 0 0 6px; }
-  .ref-item { font-size: 14px; display: flex; gap: 8px; margin-bottom: 6px; }
-  .ref-item-wrap { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #F0EEE4; }
+  .item-label { font-size: 14px; line-height: 1.4; }
+  .country-tag { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #9A988E; margin-right: 6px; }
+  .note { font-size: 12px; color: #9A988E; margin-top: 3px; }
+  .actual-date { font-size: 12px; color: #B0313F; margin-top: 4px; font-weight: 500; }
+  .country-card { background: #fff; border: 1px solid #ECEAE0; border-radius: 8px; overflow: hidden; margin-bottom: 14px; }
+  .country-head { padding: 9px 16px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #F0EEE4; }
+  .country-head .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .country-head h3 { font-family: 'Source Serif 4', serif; font-size: 15px; font-weight: 600; margin: 0; }
+  .country-body { padding: 14px 16px; }
+  .section-label { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.08em; color: #B0AFA5; font-weight: 600; margin: 0 0 8px; }
+  .ref-item { font-size: 13.5px; display: flex; gap: 8px; margin-bottom: 4px; color: #1B2430; }
+  .ref-item-wrap { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #F5F4EE; }
   .ref-item-wrap:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
   .ref-item-wrap .ref-item { margin-bottom: 2px; font-weight: 500; }
-  .calc-detail { margin: 2px 0 0 42px; }
-  .calc-detail summary { font-size: 12px; color: #B08D57; cursor: pointer; font-weight: 500; }
+  .calc-detail { margin: 4px 0 0 36px; }
+  .calc-detail summary { font-size: 11.5px; color: #B08D57; cursor: pointer; font-weight: 500; list-style: none; }
+  .calc-detail summary::-webkit-details-marker { display: none; }
+  .calc-detail summary::before { content: "+ "; }
+  .calc-detail[open] summary::before { content: "\u2212 "; }
   .calc-detail summary:hover { color: #96733F; }
-  .calc-detail p { font-size: 12.5px; color: #5A5A6E; line-height: 1.5; margin: 6px 0 0; font-weight: 400; }
-  .source-link { display: inline-block; font-size: 11px; color: #9A988E; margin-top: 6px; text-decoration: underline; }
+  .calc-detail p { font-size: 12.5px; color: #5A5A6E; line-height: 1.55; margin: 6px 0 0; font-weight: 400; }
+  .source-link { display: inline-block; font-size: 11px; color: #B0AFA5; margin-top: 6px; text-decoration: underline; }
   .source-link:hover { color: #5A5A6E; }
-  .ref-day { font-family: 'IBM Plex Mono', monospace; font-weight: 600; width: 34px; flex-shrink: 0; }
-  .ref-when { font-family: 'IBM Plex Mono', monospace; font-size: 12px; width: 88px; flex-shrink: 0; color: #5A5A6E; }
-  .footer-note { font-size: 12px; color: #9A988E; margin-top: 32px; line-height: 1.6; border-top: 1px solid #E5E3D8; padding-top: 16px; }
+  .ref-day { font-family: 'IBM Plex Mono', monospace; font-weight: 600; width: 28px; flex-shrink: 0; color: #9A988E; }
+  .ref-when { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; width: 88px; flex-shrink: 0; color: #9A988E; }
+  .footer-note { font-size: 11.5px; color: #B0AFA5; margin-top: 36px; line-height: 1.6; border-top: 1px solid #ECEAE0; padding-top: 16px; }
 </style>
 </head>
 <body>
@@ -459,17 +462,15 @@ function render() {
           if (adjusted && adjusted.getTime() !== nominal.getTime()) {
             const dir = ROLLS_BACKWARD.has(item.country.id) ? "brought forward to" : "shifts to";
             actualLine = `<div class="actual-date">Falls on ${fmtShort(nominal)} \u2014 actual payment date ${dir} <strong>${fmtShort(adjusted)}</strong></div>`;
-          } else if (nominal) {
-            actualLine = `<div class="actual-date muted">${fmtShort(nominal)}</div>`;
           }
         }
         return `
-        <li class="item">
+        <li class="item" style="border-left-color:${item.country.color}">
           <button class="check${done[item.key] ? " done" : ""}" onclick="toggleDone('${item.key}')" aria-label="Mark done">${done[item.key] ? "\u2713" : ""}</button>
-          <div class="day" style="color:${item.country.color}">${item.day ?? "\u2014"}</div>
+          <div class="day">${item.day ?? "\u2014"}</div>
           <div class="item-body${done[item.key] ? " done" : ""}">
-            <div>
-              <span class="country-tag" style="background:${item.country.color}1A;color:${item.country.color}">${item.country.name}</span>
+            <div class="item-label">
+              <span class="country-tag" style="color:${item.country.color}">${item.country.name}</span>
               ${escapeHtml(item.label)}
             </div>
             ${item.note ? `<div class="note">${escapeHtml(item.note)}</div>` : ""}
