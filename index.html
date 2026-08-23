@@ -159,6 +159,32 @@ const COUNTRIES = [
       { state: "Not levied", due: "\u2014", note: "Delhi, Haryana, Punjab, Uttar Pradesh, Rajasthan, Himachal Pradesh, Goa, Uttarakhand, J&K, Ladakh, Chandigarh, Odisha (abolished from FY26\u201327)",
         detail: "No Professions Tax Act in force \u2014 no deduction, no filing, regardless of employee salary.",
         source: "https://treelife.in/taxation/professional-tax-compliance-in-india/", sourceLabel: "treelife.in" },
+    ],
+    lwf: [
+      { state: "Maharashtra", due: "15 Jul & 15 Jan (half-yearly)", note: "revised to \u20b925/\u20b975 (employee/employer) per half-year in Mar 2024",
+        detail: "\u20b925 employee + \u20b975 employer per half-year, deducted from June and December salary. Funds worker welfare \u2014 healthcare, housing, education, recreational facilities \u2014 via the Maharashtra Labour Welfare Board. Remitted through the MLWB's online portal.",
+        source: "https://futurexsolutions.com/labour-welfare-fund-india-2026-state-wise-guide/", sourceLabel: "futurexsolutions.com" },
+      { state: "Karnataka", due: "31 Jan (annual)", note: "threshold cut from 50 to 10 employees, effective 7 Jan 2026; some sources cite an Apr 30 due date \u2014 confirm with KLWB",
+        detail: "\u20b950 employee + \u20b9100 employer per year \u2014 the second-highest employer rate nationally after Goa (\u20b9120). Since the Jan 2026 threshold change, establishments with just 10+ employees are covered, not only 50+. Paid via the Karnataka Labour Welfare Board.",
+        source: "https://ezhrm.in/labour-welfare-fund-india-2026-hr-guide/", sourceLabel: "ezhrm.in" },
+      { state: "Telangana", due: "31 Jan (annual)", note: "lowest employer contribution nationally, tied with Delhi",
+        detail: "\u20b95 employer per year, using wage-slab-based rates revised periodically by the Telangana Labour Welfare Board \u2014 confirm the current slab notification for the exact employee share.",
+        source: "https://ezhrm.in/labour-welfare-fund-india-2026-hr-guide/", sourceLabel: "ezhrm.in" },
+      { state: "Andhra Pradesh", due: "31 Jan (annual)", note: "factories covered regardless of headcount; shops/commercial establishments need 20+ employees",
+        detail: "Wage-slab-based contribution (not a flat rupee amount), revised periodically \u2014 check the AP Labour Welfare Board's current notification for exact slabs. The dual headcount threshold (factories vs. shops) is unusual among LWF states.",
+        source: "https://eligibilitytools.in/guides/labour-welfare-fund-india-applicability-guide/", sourceLabel: "eligibilitytools.in" },
+      { state: "West Bengal", due: "15 Jul & 15 Jan (half-yearly)", note: "employer share raised from \u20b96 to \u20b930 in Jan 2024",
+        detail: "Employer contribution \u20b930/half-year; employee share is smaller \u2014 check the current WBLWB notification for the exact figure. Deducted alongside June/December payroll.",
+        source: "https://eligibilitytools.in/guides/labour-welfare-fund-india-applicability-guide/", sourceLabel: "eligibilitytools.in" },
+      { state: "Tamil Nadu", due: "31 Jan (annual)", note: "revised from \u20b910/\u20b920 to \u20b920/\u20b940 in Dec 2022",
+        detail: "\u20b920 employee + \u20b940 employer per year, funding worker welfare via the Tamil Nadu Labour Welfare Board.",
+        source: "https://eligibilitytools.in/guides/labour-welfare-fund-india-applicability-guide/", sourceLabel: "eligibilitytools.in" },
+      { state: "Gujarat", due: "15 Jul & 15 Jan (half-yearly)", note: "one of the lowest employee rates nationally",
+        detail: "\u20b96 employee per half-year; employer share is a multiple of the employee share under the Gujarat LWF Act \u2014 confirm the exact current ratio with the state board before relying on a total figure.",
+        source: "https://ezhrm.in/labour-welfare-fund-india-2026-state-wise-guide/", sourceLabel: "ezhrm.in" },
+      { state: "Madhya Pradesh", due: "15 Jul & 15 Jan (half-yearly)", note: "",
+        detail: "Half-yearly flat-rupee contribution from both employer and employee \u2014 exact current rate wasn't confirmed in this research pass; check the Madhya Pradesh Labour Welfare Board notification directly before relying on a specific figure.",
+        source: "https://www.patronaccounting.com/blog/labour-welfare-fund-india-contribution-rates-due-dates", sourceLabel: "patronaccounting.com" },
     ]
   },
   { id: "sg", name: "Singapore", color: "#8B2FC9",
@@ -515,6 +541,18 @@ function render() {
             ${c.professionalTax ? `
               <p class="section-label" style="margin-top:10px">Professional Tax \u2014 by state</p>
               ${c.professionalTax.map(p => `
+                <div class="ref-item-wrap">
+                  <div class="ref-item">
+                    <span class="ref-when" style="width:118px">${escapeHtml(p.state)}</span>
+                    <span>${escapeHtml(p.due)}${p.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(p.note)}</span>` : ""}</span>
+                  </div>
+                  ${detailsBlock(p.detail, p.source, p.sourceLabel)}
+                </div>`).join("")}
+            ` : ""}
+            ${c.lwf ? `
+              <p class="section-label" style="margin-top:10px">Labour Welfare Fund \u2014 by state</p>
+              <p class="note" style="margin-bottom:8px">LWF only applies in 16 of 36 states/UTs \u2014 unlisted states (e.g. Delhi, UP, Rajasthan) generally don't levy it, but confirm for any state not shown here.</p>
+              ${c.lwf.map(p => `
                 <div class="ref-item-wrap">
                   <div class="ref-item">
                     <span class="ref-when" style="width:118px">${escapeHtml(p.state)}</span>
