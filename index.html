@@ -61,6 +61,18 @@
   .ref-day { font-family: 'IBM Plex Mono', monospace; font-weight: 600; width: 28px; flex-shrink: 0; color: #9A988E; }
   .ref-when { font-family: 'IBM Plex Mono', monospace; font-size: 11.5px; width: 88px; flex-shrink: 0; color: #9A988E; }
   .footer-note { font-size: 11.5px; color: #B0AFA5; margin-top: 36px; line-height: 1.6; border-top: 1px solid #ECEAE0; padding-top: 16px; }
+  .data-table { width: 100%; border-collapse: collapse; margin-bottom: 4px; }
+  .data-table thead th { text-align: left; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: #B0AFA5; font-weight: 600; padding: 0 8px 6px; border-bottom: 1px solid #ECEAE0; }
+  .data-table tbody tr.data-row { cursor: pointer; }
+  .data-table tbody tr.data-row.no-expand { cursor: default; }
+  .data-table tbody tr.data-row:hover { background: #FAF9F5; }
+  .data-table td { padding: 8px 8px; font-size: 13px; border-bottom: 1px solid #F5F4EE; vertical-align: top; }
+  .td-c1 { width: 30%; color: #1B2430; font-weight: 500; }
+  .td-c2 { color: #1B2430; }
+  .td-rate { color: #5A5A6E; font-size: 12px; white-space: nowrap; }
+  .td-icon { width: 18px; text-align: center; color: #B08D57; font-weight: 600; font-size: 13px; }
+  .detail-row td { background: #FAF9F5; border-bottom: 1px solid #F5F4EE; padding: 10px 8px 12px; }
+  .table-detail-text { font-size: 12.5px; color: #5A5A6E; line-height: 1.55; margin: 0; }
 </style>
 </head>
 <body>
@@ -132,57 +144,57 @@ const COUNTRIES = [
         source: "https://www.incorpx.io/blog/professional-tax-registration-state-wise-guide", sourceLabel: "incorpx.io" },
     ],
     professionalTax: [
-      { state: "Maharashtra", due: "15th of following month", note: "moved from end-of-month, effective Mar 2026; women exempt up to \u20b925,000/mo",
+      { state: "Maharashtra", due: "15th of following month", note: "moved from end-of-month, effective Mar 2026; women exempt up to \u20b925,000/mo", rate: "Nil to \u20b97.5k (\u20b925k women); \u20b9175 to \u20b910k; \u20b9200 above",
         detail: "Slabs (2026): nil up to \u20b97,500 (men) / \u20b925,000 (women); \u20b9175/month for \u20b97,501\u201310,000; \u20b9200/month above \u20b910,000 (\u20b9300 in February to reach the \u20b92,500 annual cap).",
         source: "https://ezhrm.in/professional-tax-india-2026-state-wise-slabs-filing-guide/", sourceLabel: "ezhrm.in" },
-      { state: "Karnataka", due: "20th of following month", note: "exemption raised to \u20b925,000/mo in 2026",
+      { state: "Karnataka", due: "20th of following month", note: "exemption raised to \u20b925,000/mo in 2026", rate: "Nil to \u20b925k; \u20b9200 above",
         detail: "Nil up to \u20b925,000/month gross; \u20b9200/month above that threshold.",
         source: "https://futurexsolutions.com/professional-tax-india/", sourceLabel: "futurexsolutions.com" },
-      { state: "Telangana", due: "10th of following month", note: "exempt up to \u20b915,000/mo; \u20b9150 for \u20b915,001\u201320,000; \u20b9200 above",
+      { state: "Telangana", due: "10th of following month", note: "exempt up to \u20b915,000/mo; \u20b9150 for \u20b915,001\u201320,000; \u20b9200 above", rate: "Nil to \u20b915k; \u20b9150 to \u20b920k; \u20b9200 above",
         detail: "Nil up to \u20b915,000/month; \u20b9150/month for \u20b915,001\u201320,000; \u20b9200/month above \u20b920,000.",
         source: "https://hrengage.ai/compliance/professional-tax/telangana", sourceLabel: "hrengage.ai" },
-      { state: "Andhra Pradesh", due: "10th of following month", note: "similar structure to Telangana",
+      { state: "Andhra Pradesh", due: "10th of following month", note: "similar structure to Telangana", rate: "Mirrors Telangana (unconfirmed)",
         detail: "Slab structure mirrors Telangana's (both states share the pre-bifurcation Act) \u2014 confirm current AP-specific notification before relying on exact cutoffs.",
         source: "https://futurexsolutions.com/professional-tax-india/", sourceLabel: "futurexsolutions.com (general list only \u2014 AP-specific slab not directly confirmed)" },
-      { state: "West Bengal", due: "31 Jul (annual)", note: "single annual payment for the full FY, not monthly",
+      { state: "West Bengal", due: "31 Jul (annual)", note: "single annual payment for the full FY, not monthly", rate: "Slab-based, capped \u20b92,500/yr",
         detail: "Slab-based on monthly gross salary, capped at the statutory \u20b92,500/year maximum; paid as one annual sum rather than monthly.",
         source: "https://www.zoho.com/in/payroll/academy/taxes-and-compliance/professional-tax-rules.html", sourceLabel: "zoho.com" },
-      { state: "Tamil Nadu", due: "Aug (Apr\u2013Sep) & Jan (Oct\u2013Mar)", note: "half-yearly, not monthly",
+      { state: "Tamil Nadu", due: "Aug (Apr\u2013Sep) & Jan (Oct\u2013Mar)", note: "half-yearly, not monthly", rate: "Slab-based, capped \u20b92,500/yr",
         detail: "Slab based on average monthly gross salary over the half-year period, capped at \u20b92,500/year in total across both instalments.",
         source: "https://www.incorpx.io/blog/professional-tax-registration-state-wise-guide", sourceLabel: "incorpx.io" },
-      { state: "Gujarat", due: "15th of following month", note: "",
+      { state: "Gujarat", due: "15th of following month", note: "", rate: "Slab-based, capped \u20b92,500/yr",
         detail: "Slab-based on monthly gross salary; check the current Gujarat PT Act notification for exact band cutoffs, capped at \u20b92,500/year.",
         source: "https://treelife.in/taxation/professional-tax-compliance-in-india/", sourceLabel: "treelife.in" },
-      { state: "Madhya Pradesh", due: "10th of following month", note: "",
+      { state: "Madhya Pradesh", due: "10th of following month", note: "", rate: "Slab-based, capped \u20b92,500/yr",
         detail: "Slab-based on monthly gross salary, capped at \u20b92,500/year; paid via the MP Commercial Tax Department portal.",
         source: "https://treelife.in/taxation/professional-tax-compliance-in-india/", sourceLabel: "treelife.in" },
-      { state: "Not levied", due: "\u2014", note: "Delhi, Haryana, Punjab, Uttar Pradesh, Rajasthan, Himachal Pradesh, Goa, Uttarakhand, J&K, Ladakh, Chandigarh, Odisha (abolished from FY26\u201327)",
+      { state: "Not levied", due: "\u2014", note: "Delhi, Haryana, Punjab, Uttar Pradesh, Rajasthan, Himachal Pradesh, Goa, Uttarakhand, J&K, Ladakh, Chandigarh, Odisha (abolished from FY26\u201327)", rate: "\u2014",
         detail: "No Professions Tax Act in force \u2014 no deduction, no filing, regardless of employee salary.",
         source: "https://treelife.in/taxation/professional-tax-compliance-in-india/", sourceLabel: "treelife.in" },
     ],
     lwf: [
-      { state: "Maharashtra", due: "15 Jul & 15 Jan (half-yearly)", note: "revised to \u20b925/\u20b975 (employee/employer) per half-year in Mar 2024",
+      { state: "Maharashtra", due: "15 Jul & 15 Jan (half-yearly)", note: "revised to \u20b925/\u20b975 (employee/employer) per half-year in Mar 2024", rate: "\u20b925 / \u20b975 (emp/empr)",
         detail: "\u20b925 employee + \u20b975 employer per half-year, deducted from June and December salary. Funds worker welfare \u2014 healthcare, housing, education, recreational facilities \u2014 via the Maharashtra Labour Welfare Board. Remitted through the MLWB's online portal.",
         source: "https://futurexsolutions.com/labour-welfare-fund-india-2026-state-wise-guide/", sourceLabel: "futurexsolutions.com" },
-      { state: "Karnataka", due: "31 Jan (annual)", note: "threshold cut from 50 to 10 employees, effective 7 Jan 2026; some sources cite an Apr 30 due date \u2014 confirm with KLWB",
+      { state: "Karnataka", due: "31 Jan (annual)", note: "threshold cut from 50 to 10 employees, effective 7 Jan 2026; some sources cite an Apr 30 due date \u2014 confirm with KLWB", rate: "\u20b950 / \u20b9100",
         detail: "\u20b950 employee + \u20b9100 employer per year \u2014 the second-highest employer rate nationally after Goa (\u20b9120). Since the Jan 2026 threshold change, establishments with just 10+ employees are covered, not only 50+. Paid via the Karnataka Labour Welfare Board.",
         source: "https://ezhrm.in/labour-welfare-fund-india-2026-hr-guide/", sourceLabel: "ezhrm.in" },
-      { state: "Telangana", due: "31 Jan (annual)", note: "lowest employer contribution nationally, tied with Delhi",
+      { state: "Telangana", due: "31 Jan (annual)", note: "lowest employer contribution nationally, tied with Delhi", rate: "Slab-based, \u20b95 empr/yr",
         detail: "\u20b95 employer per year, using wage-slab-based rates revised periodically by the Telangana Labour Welfare Board \u2014 confirm the current slab notification for the exact employee share.",
         source: "https://ezhrm.in/labour-welfare-fund-india-2026-hr-guide/", sourceLabel: "ezhrm.in" },
-      { state: "Andhra Pradesh", due: "31 Jan (annual)", note: "factories covered regardless of headcount; shops/commercial establishments need 20+ employees",
+      { state: "Andhra Pradesh", due: "31 Jan (annual)", note: "factories covered regardless of headcount; shops/commercial establishments need 20+ employees", rate: "Slab-based (unconfirmed)",
         detail: "Wage-slab-based contribution (not a flat rupee amount), revised periodically \u2014 check the AP Labour Welfare Board's current notification for exact slabs. The dual headcount threshold (factories vs. shops) is unusual among LWF states.",
         source: "https://eligibilitytools.in/guides/labour-welfare-fund-india-applicability-guide/", sourceLabel: "eligibilitytools.in" },
-      { state: "West Bengal", due: "15 Jul & 15 Jan (half-yearly)", note: "employer share raised from \u20b96 to \u20b930 in Jan 2024",
+      { state: "West Bengal", due: "15 Jul & 15 Jan (half-yearly)", note: "employer share raised from \u20b96 to \u20b930 in Jan 2024", rate: "? / \u20b930",
         detail: "Employer contribution \u20b930/half-year; employee share is smaller \u2014 check the current WBLWB notification for the exact figure. Deducted alongside June/December payroll.",
         source: "https://eligibilitytools.in/guides/labour-welfare-fund-india-applicability-guide/", sourceLabel: "eligibilitytools.in" },
-      { state: "Tamil Nadu", due: "31 Jan (annual)", note: "revised from \u20b910/\u20b920 to \u20b920/\u20b940 in Dec 2022",
+      { state: "Tamil Nadu", due: "31 Jan (annual)", note: "revised from \u20b910/\u20b920 to \u20b920/\u20b940 in Dec 2022", rate: "\u20b920 / \u20b940",
         detail: "\u20b920 employee + \u20b940 employer per year, funding worker welfare via the Tamil Nadu Labour Welfare Board.",
         source: "https://eligibilitytools.in/guides/labour-welfare-fund-india-applicability-guide/", sourceLabel: "eligibilitytools.in" },
-      { state: "Gujarat", due: "15 Jul & 15 Jan (half-yearly)", note: "one of the lowest employee rates nationally",
+      { state: "Gujarat", due: "15 Jul & 15 Jan (half-yearly)", note: "one of the lowest employee rates nationally", rate: "\u20b96 / multiple thereof",
         detail: "\u20b96 employee per half-year; employer share is a multiple of the employee share under the Gujarat LWF Act \u2014 confirm the exact current ratio with the state board before relying on a total figure.",
         source: "https://ezhrm.in/labour-welfare-fund-india-2026-state-wise-guide/", sourceLabel: "ezhrm.in" },
-      { state: "Madhya Pradesh", due: "15 Jul & 15 Jan (half-yearly)", note: "",
+      { state: "Madhya Pradesh", due: "15 Jul & 15 Jan (half-yearly)", note: "", rate: "Unconfirmed",
         detail: "Half-yearly flat-rupee contribution from both employer and employee \u2014 exact current rate wasn't confirmed in this research pass; check the Madhya Pradesh Labour Welfare Board notification directly before relying on a specific figure.",
         source: "https://www.patronaccounting.com/blog/labour-welfare-fund-india-contribution-rates-due-dates", sourceLabel: "patronaccounting.com" },
     ]
@@ -430,6 +442,43 @@ function detailsBlock(text, sourceUrl, sourceLabel) {
   return `<details class="calc-detail"><summary>How it's calculated & paid</summary><p>${escapeHtml(text)}</p>${sourceHtml}</details>`;
 }
 
+function toggleRow(rid) {
+  const row = document.getElementById("row-" + rid);
+  const icon = document.getElementById("icon-" + rid);
+  if (!row) return;
+  const isOpen = row.style.display !== "none";
+  row.style.display = isOpen ? "none" : "table-row";
+  if (icon) icon.textContent = isOpen ? "+" : "\u2212";
+}
+
+// col1Header/col2Header label the first two columns (e.g. "Day"/"Item" or "State"/"Due").
+// rows: [{ c1, c2, note, detail, source, sourceLabel, rate }]
+function dataTable(idPrefix, col1Header, col2Header, rows, hasRateCol) {
+  const body = rows.map((r, i) => {
+    const rid = idPrefix + "-" + i;
+    const hasDetail = !!(r.detail || r.note);
+    return `
+      <tr class="data-row${hasDetail ? "" : " no-expand"}" ${hasDetail ? `onclick="toggleRow('${rid}')"` : ""}>
+        <td class="mono td-c1">${escapeHtml(r.c1)}</td>
+        <td class="td-c2">${escapeHtml(r.c2)}</td>
+        ${hasRateCol ? `<td class="td-rate">${escapeHtml(r.rate || "")}</td>` : ""}
+        <td class="td-icon" id="icon-${rid}">${hasDetail ? "+" : ""}</td>
+      </tr>
+      ${hasDetail ? `
+      <tr class="detail-row" id="row-${rid}" style="display:none;">
+        <td colspan="${hasRateCol ? 4 : 3}">
+          ${r.note ? `<div class="note" style="margin-bottom:4px">${escapeHtml(r.note)}</div>` : ""}
+          ${r.detail ? `<p class="table-detail-text">${escapeHtml(r.detail)}</p>` : ""}
+          ${r.source ? `<a href="${r.source}" target="_blank" rel="noopener noreferrer" class="source-link">Source: ${escapeHtml(r.sourceLabel || r.source)} \u2197</a>` : ""}
+        </td>
+      </tr>` : ""}
+    `;
+  }).join("");
+  return `<table class="data-table"><thead><tr>
+      <th>${escapeHtml(col1Header)}</th><th>${escapeHtml(col2Header)}</th>${hasRateCol ? "<th>Rate</th>" : ""}<th></th>
+    </tr></thead><tbody>${body}</tbody></table>`;
+}
+
 function setIndiaState(v) { indiaState = v; render(); }
 
 function renderIndiaStateRow() {
@@ -520,47 +569,48 @@ function render() {
             <h3 style="color:${c.color}">${c.name}</h3>
           </div>
           <div class="country-body">
-            <p class="section-label">Monthly</p>
-            ${c.monthly.map(m => `
-              <div class="ref-item-wrap">
-                <div class="ref-item">
-                  <span class="ref-day">${m.day ?? "\u2014"}</span>
-                  <span>${escapeHtml(m.label)}${m.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(m.note)}</span>` : ""}</span>
-                </div>
-                ${detailsBlock(m.detail, m.source, m.sourceLabel)}
-              </div>`).join("")}
-            <p class="section-label" style="margin-top:10px">Annual / event-based</p>
-            ${c.annual.map(a => `
-              <div class="ref-item-wrap">
-                <div class="ref-item">
-                  <span class="ref-when">${a.when}</span>
-                  <span>${escapeHtml(a.label)}</span>
-                </div>
-                ${detailsBlock(a.detail, a.source, a.sourceLabel)}
-              </div>`).join("")}
-            ${c.professionalTax ? `
-              <p class="section-label" style="margin-top:10px">Professional Tax \u2014 by state</p>
-              ${c.professionalTax.map(p => `
+            ${c.id === "in" ? `
+              <p class="section-label">Monthly</p>
+              ${dataTable("in-monthly", "Day", "Item", c.monthly.map(m => ({
+                c1: m.day ?? "\u2014", c2: m.label, note: m.note, detail: m.detail, source: m.source, sourceLabel: m.sourceLabel
+              })), false)}
+              <p class="section-label" style="margin-top:16px">Annual / event-based</p>
+              ${dataTable("in-annual", "When", "Item", c.annual.map(a => ({
+                c1: a.when, c2: a.label, detail: a.detail, source: a.source, sourceLabel: a.sourceLabel
+              })), false)}
+              ${c.professionalTax ? `
+                <p class="section-label" style="margin-top:16px">Professional Tax \u2014 by state</p>
+                ${dataTable("in-pt", "State", "Due", c.professionalTax.map(p => ({
+                  c1: p.state, c2: p.due, rate: p.rate, note: p.note, detail: p.detail, source: p.source, sourceLabel: p.sourceLabel
+                })), true)}
+              ` : ""}
+              ${c.lwf ? `
+                <p class="section-label" style="margin-top:16px">Labour Welfare Fund \u2014 by state</p>
+                <p class="note" style="margin-bottom:8px">Applies in 16 of 36 states/UTs \u2014 unlisted states (e.g. Delhi, UP, Rajasthan) generally don't levy it, but confirm for any state not shown here.</p>
+                ${dataTable("in-lwf", "State", "Due", c.lwf.map(p => ({
+                  c1: p.state, c2: p.due, rate: p.rate, note: p.note, detail: p.detail, source: p.source, sourceLabel: p.sourceLabel
+                })), true)}
+              ` : ""}
+            ` : `
+              <p class="section-label">Monthly</p>
+              ${c.monthly.map(m => `
                 <div class="ref-item-wrap">
                   <div class="ref-item">
-                    <span class="ref-when" style="width:118px">${escapeHtml(p.state)}</span>
-                    <span>${escapeHtml(p.due)}${p.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(p.note)}</span>` : ""}</span>
+                    <span class="ref-day">${m.day ?? "\u2014"}</span>
+                    <span>${escapeHtml(m.label)}${m.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(m.note)}</span>` : ""}</span>
                   </div>
-                  ${detailsBlock(p.detail, p.source, p.sourceLabel)}
+                  ${detailsBlock(m.detail, m.source, m.sourceLabel)}
                 </div>`).join("")}
-            ` : ""}
-            ${c.lwf ? `
-              <p class="section-label" style="margin-top:10px">Labour Welfare Fund \u2014 by state</p>
-              <p class="note" style="margin-bottom:8px">LWF only applies in 16 of 36 states/UTs \u2014 unlisted states (e.g. Delhi, UP, Rajasthan) generally don't levy it, but confirm for any state not shown here.</p>
-              ${c.lwf.map(p => `
+              <p class="section-label" style="margin-top:10px">Annual / event-based</p>
+              ${c.annual.map(a => `
                 <div class="ref-item-wrap">
                   <div class="ref-item">
-                    <span class="ref-when" style="width:118px">${escapeHtml(p.state)}</span>
-                    <span>${escapeHtml(p.due)}${p.note ? ` <span class="note" style="display:inline">\u2014 ${escapeHtml(p.note)}</span>` : ""}</span>
+                    <span class="ref-when">${a.when}</span>
+                    <span>${escapeHtml(a.label)}</span>
                   </div>
-                  ${detailsBlock(p.detail, p.source, p.sourceLabel)}
+                  ${detailsBlock(a.detail, a.source, a.sourceLabel)}
                 </div>`).join("")}
-            ` : ""}
+            `}
           </div>
         </div>
       `).join("");
